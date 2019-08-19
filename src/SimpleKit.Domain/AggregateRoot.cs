@@ -1,22 +1,45 @@
 using System;
 using System.Collections.Generic;
+using SimpleKit.Domain.Events;
 
 namespace SimpleKit.Domain
 {
-    public abstract class AggregateRoot<TKey> :  Entity<TKey> where TKey: IEquatable<TKey>
+    public class AggregateRootBase : AggregateRootWithId<Guid>
     {
-        private List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
-        public List<IDomainEvent> UncommitedEvents()
+        public AggregateRootBase(Guid id) : base(id)
         {
-            return _domainEvents;
         }
-        protected void AddDomainEvent(IDomainEvent domainEvent)
-        {
-            _domainEvents.Add(domainEvent);
+        public AggregateRootBase() : this(Guid.NewGuid())
+        {            
         }
-        public void ClearAllEvents()
+    }
+
+    public class AggregateRootWithId<TId> : EntityWithId<TId>
+    {
+        private ICollection<IDomainEvent> _uncommitedDomainEvents = new List<IDomainEvent>();
+        protected AggregateRootWithId(TId id) : base(id)
         {
-            _domainEvents.Clear();
-        }        
+        }
+
+        public void SetId(TId id)
+        {
+            Id = id;
+        }
+
+        public void AddEvent(IDomainEvent @domainEvent)
+        {
+            _uncommitedDomainEvents.Add(domainEvent);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _uncommitedDomainEvents.Clear();
+        }
+        public void ApplyEvent(IDomainEvent @domainEvent)
+        {            
+            DomainEvents.Raise(domainEvent);
+        }
+
+        public int Version { get; set; }
     }
 }
