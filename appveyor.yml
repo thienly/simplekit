@@ -24,7 +24,7 @@ test_script:
   - cmd: dotnet restore ./src/SimpleKit.sln --verbosity m
   # run the unit tests (requires changing into the test directory)
   - cmd: dotnet test tests/Test.SimpleKit.Domain/
-  - cmd: - cmd: dotnet test tests/Test.SimpleKit.Repository.EfCore/
+  - cmd: dotnet test tests/Test.SimpleKit.Repository.EfCore/
 on_finish :
   # any cleanup in here
 deploy: off
