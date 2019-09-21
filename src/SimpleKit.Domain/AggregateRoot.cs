@@ -1,9 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using SimpleKit.Domain.Events;
 
 namespace SimpleKit.Domain
 {
+    public interface IAggregateRoot
+    {
+        void AddEvent(IDomainEvent @domainEvent);
+        void ClearDomainEvents();
+        void ApplyEvent(IDomainEvent @domainEvent);
+        IReadOnlyCollection<IDomainEvent> GetUncommittedEvents();
+    }
     public class AggregateRootBase : AggregateRootWithId<Guid>
     {
         public AggregateRootBase(Guid id) : base(id)
@@ -14,7 +23,7 @@ namespace SimpleKit.Domain
         }
     }
 
-    public class AggregateRootWithId<TId> : EntityWithId<TId>
+    public class AggregateRootWithId<TId> : EntityWithId<TId>, IAggregateRoot
     {
         private ICollection<IDomainEvent> _uncommitedDomainEvents = new List<IDomainEvent>();
         protected AggregateRootWithId(TId id) : base(id)
@@ -38,6 +47,11 @@ namespace SimpleKit.Domain
         public void ApplyEvent(IDomainEvent @domainEvent)
         {            
             DomainEvents.Raise(domainEvent);
+        }
+
+        public IReadOnlyCollection<IDomainEvent> GetUncommittedEvents()
+        {
+            return _uncommitedDomainEvents.ToList();
         }
 
         public int Version { get; set; }
