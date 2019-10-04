@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SimpleKit.Domain
+namespace SimpleKit.Domain.Repositories
 {
     public interface ISpecification<T>
     {

@@ -1,4 +1,5 @@
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
 
 namespace Test.SimpleKit.Domain.DataModels
 {

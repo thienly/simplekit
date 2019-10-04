@@ -1,11 +1,9 @@
 using System;
-using System.Data;
-using System.Data.Common;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Test.SimpleKit.Repository.EfCore.SeedDb;
+using Test.SimpleKit.Repository.EfCore.DbContext;
 
 namespace Test.SimpleKit.Repository.EfCore
 {

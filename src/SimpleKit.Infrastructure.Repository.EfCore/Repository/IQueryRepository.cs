@@ -1,5 +1,6 @@
 using System.Linq;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {

@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\SimpleKit.Domain\SimpleKit.Domain.csproj" />
+      <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Repository.EfCore\SimpleKit.Infrastructure.Repository.EfCore.csproj" />
     </ItemGroup>
 
 </Project>

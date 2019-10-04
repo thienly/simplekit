@@ -1,6 +1,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {

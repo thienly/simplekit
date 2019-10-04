@@ -1,17 +1,8 @@
 using System;
+using SimpleKit.Domain.Identity;
 
-namespace SimpleKit.Domain
+namespace SimpleKit.Domain.Entities
 {
-    public abstract class Entity : IdentityBase<Guid>
-    {
-        protected Entity() : base(Guid.NewGuid())
-        {       
-        }
-        protected Entity(Guid id) : base(id)
-        {
-        }
-    }
-
     public abstract class EntityWithId<TId> : IdentityBase<TId>, IAuditable
     {
         protected EntityWithId()

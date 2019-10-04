@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SimpleKit.Domain;
 using Test.SimpleKit.Repository.EfCore.SeedDb;
 
-namespace Test.SimpleKit.Repository.EfCore
+namespace Test.SimpleKit.Repository.EfCore.DbContext
 {
     public static class EntityTypeConfigurationHelper
     {
@@ -37,7 +37,7 @@ namespace Test.SimpleKit.Repository.EfCore
                 a.Property(x => x.Street).HasMaxLength(100).IsRequired();
                 a.Property(x => x.AddressNumber).HasMaxLength(100).IsRequired();
             });
-            builder.HasMany(x => x.BankAccounts);
+            builder.HasMany(x => x.BankAccounts).WithOne(e=> e.Person);
         }
     }
 
@@ -50,7 +50,7 @@ namespace Test.SimpleKit.Repository.EfCore
             builder.Property(x => x.BankName).HasMaxLength(100).IsRequired();
         }
     }
-    public class SuiteDbContext : DbContext
+    public class SuiteDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public DbSet<Person> Person { get; set; }
         public DbSet<BankAccount> BankAccount { get; set; }

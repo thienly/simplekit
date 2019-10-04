@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
 using SimpleKit.Infrastructure.Repository.EfCore.Repository;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions

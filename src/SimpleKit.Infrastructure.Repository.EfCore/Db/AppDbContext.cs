@@ -1,14 +1,24 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
 using SimpleKit.Domain.Events;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Db
 {
     public class AppDbContext : DbContext
     {
+        private ILogger<AppDbContext> _logger;
+        private IDbContextTransaction _transaction;
+        public AppDbContext(ILogger<AppDbContext> logger, IDbContextTransaction transaction)
+        {
+            _logger = logger;
+            _transaction = transaction;
+        }
+
         public override int SaveChanges()
         {
-            // Dispatch domain events
             foreach (var entityEntry in base.ChangeTracker.Entries())
             {
                 if (entityEntry.Entity is IAggregateRoot)
@@ -21,7 +31,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
                 }
             }
             return base.SaveChanges();
-            // Dispatch integration event. The integration event only fire if local data is successfully commited. 
         }
     }
 }

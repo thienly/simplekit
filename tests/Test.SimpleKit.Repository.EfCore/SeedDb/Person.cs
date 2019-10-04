@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
-using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
+using Test.SimpleKit.Repository.EfCore.SeedDb.Events;
 
 namespace Test.SimpleKit.Repository.EfCore.SeedDb
 {
-    public class Person: EntityWithId<int>
+    public class Person: AggregateRootWithId<int>
     {
-        public Person(int id, string name) : base(id)
+        private readonly List<BankAccount> _bankAccounts = new List<BankAccount>();
+
+        protected Person(int id, string name) : base(id)
         {
             Name = name;
         }
@@ -15,37 +18,36 @@ namespace Test.SimpleKit.Repository.EfCore.SeedDb
         {
             Name = name;
         }
+
         public string Name { get; private set; }
         public Address PermenantAddress { get; private set; }
 
         public void RegisterAddress(Address address)
         {
             PermenantAddress = address;
+            var @event = new AddressRegisteredEvent()
+            {
+                AddressNumber = address.AddressNumber,
+                EventId = Guid.NewGuid(),
+                Person = this,
+                Street = address.Street,
+                Ward = address.Ward
+            };
+            AddEvent(@event);
         }
-        public IList<BankAccount> BankAccounts { get; private set; }
+
+        public IReadOnlyCollection<BankAccount> BankAccounts => _bankAccounts;
 
         public void AddBankAccount(BankAccount bankAccount)
         {
-            BankAccounts.Add(bankAccount);
-        }
-        
-    }
-
-    public class Address : ValueObject<Address>
-    {
-        public string AddressNumber { get; set; }
-        public string Street { get; set; }
-        public string Ward { get; set; }
-    }
-
-    public class BankAccount : Entity
-    {
-        public string BankName { get; private set; }
-
-        public BankAccount(Guid id, string bankName) : base(id)
-        {
-            Id = id;
-            BankName = bankName;
+            _bankAccounts.Add(bankAccount);
+            var @event = new BankAccountAddedEvent()
+            {
+                Person = this,
+                BankName = bankAccount.BankName,
+                EventId = Guid.NewGuid()
+            };
+            AddEvent(@event);
         }
         
     }

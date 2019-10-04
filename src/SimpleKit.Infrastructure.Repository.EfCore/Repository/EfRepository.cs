@@ -1,9 +1,15 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Repositories;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
+    /// <summary>
+    /// All the method only focus on the aggregate root, all relationship is going to to with event 
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class,IAggregateRoot
     {
         private DbContext _dbContext;
@@ -16,8 +22,9 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         
         public Task<TEntity> AddAsync(TEntity entity)
         {
-            // we need id return immediately, need a real development from this point.  
-            var entityEntry = _dbSet.Add(entity);
+            var entityEntry = _dbContext.Entry(entity);
+            entityEntry.State = EntityState.Added;
+            _dbContext.SaveChanges();
             return Task.FromResult(entityEntry.Entity);
         }
 

@@ -1,31 +1,7 @@
 using System;
 
-namespace SimpleKit.Domain
+namespace SimpleKit.Domain.Identity
 {
-    public interface IIdentity
-    {
-        Guid Id { get; set; }
-    }
-
-    public interface IIdentityWithId<TId>
-    {
-        TId Id { get;}
-    }
-
-    public abstract class IdentityBase : IIdentity, IEquatable<Guid>, IIdentityWithId<Guid>
-    {
-        public IdentityBase(Guid id)
-        {
-            Id = id;
-        }
-        public Guid Id { get; set; }
-
-        public bool Equals(Guid other)
-        {
-            return this.Id == other;
-        }
-    }
-
     public abstract class IdentityBase<TId> : IEquatable<IdentityBase<TId>>, IIdentityWithId<TId>
     {
         public IdentityBase()
@@ -62,6 +38,21 @@ namespace SimpleKit.Domain
         public static bool operator !=(IdentityBase<TId> x, IdentityBase<TId> y)
         {
             return !x.Equals(y);
+        }
+    }
+
+    public abstract class IdentityBase : IIdentity, IEquatable<Guid>, IIdentityWithId<Guid>
+    {
+        public IdentityBase(Guid id)
+        {
+            Id = id;
+        }
+
+        public Guid Id { get; set; }
+
+        public bool Equals(Guid other)
+        {
+            return this.Id == other;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Test.SimpleKit.Repository.EfCore
         [Fact]
         public async Task Test_if_add_return_new_id()
         {
-            var p = new Person(1,"TLP");
+            var p = new Person("TLP");
             p.RegisterAddress(new Address()
             {
                 Ward = "P1",

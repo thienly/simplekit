@@ -1,45 +1,90 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SimpleKit.Domain;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Events;
+using SimpleKit.Domain.Repositories;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
-    /// <summary>
-    /// The other call for this is Repository for command handler
-    /// </summary>
-    
     public class EfUnitOfWork : IUnitOfWork
     {
         private readonly DbContext _dbContext;
-        private ConcurrentDictionary<Type, object> _repositories = new ConcurrentDictionary<Type, object>();
-
-        public EfUnitOfWork(DbContext dbContext)
+        private Dictionary<Type,object> _repositories = new Dictionary<Type, object>();
+        private IDbContextTransaction _transaction; // only for each request
+        private ILogger<EfUnitOfWork> _logger;
+        public EfUnitOfWork(DbContext dbContext, IDbContextTransaction dbTransaction, ILogger<EfUnitOfWork> logger)
         {
             _dbContext = dbContext;
+            _transaction = dbTransaction;
+            _logger = logger;
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return _dbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                _logger.LogInformation($"Starting transaction {_transaction.TransactionId}");
+                ProcessUnCommittedEvents();
+                var result = _dbContext.SaveChangesAsync(cancellationToken);
+                _transaction.Commit();
+                _logger.LogInformation("Ending transaction");
+                return result;
+            }
+            catch (SimpleKitTransactionException e)
+            {
+                _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", e);
+                throw;
+            }
         }
 
         public int SaveChanges()
         {
-            return _dbContext.SaveChanges();
+            try
+            {
+                _logger.LogInformation($"Starting transaction {_transaction.TransactionId}");
+                ProcessUnCommittedEvents();
+                var result = _dbContext.SaveChanges();
+                _transaction.Commit();
+                _logger.LogInformation("Ending transaction");
+                return result;
+            }
+            catch (SimpleKitTransactionException e)
+            {
+                _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", e);
+                throw;
+            }
         }
 
+        private void ProcessUnCommittedEvents()
+        {
+            foreach (var key in _repositories.Keys)
+            {
+                var entity = key as IAggregateRoot;
+                foreach (var uncommittedEvent in entity.GetUncommittedEvents())
+                {
+                    DomainEvents.Raise(uncommittedEvent);
+                }
+            }
+            _repositories.Clear();
+        }
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IAggregateRoot
         {
             if (_repositories.ContainsKey(typeof(TEntity)))
             {
                 return _repositories[typeof(TEntity)] as IRepository<TEntity>;
             }
+
             var repository = new EfRepository<TEntity>(_dbContext);
-            _repositories.TryAdd(typeof(TEntity), repository);
+            _repositories.Add(typeof(TEntity), repository);
             return repository;
         }
+        
     }
 }
