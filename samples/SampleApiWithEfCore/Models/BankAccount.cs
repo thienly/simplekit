@@ -1,8 +1,7 @@
 using System;
-using Remotion.Linq.Clauses.ResultOperators;
 using SimpleKit.Domain.Entities;
 
-namespace Test.SimpleKit.Repository.EfCore.SeedDb
+namespace SampleApiWithEfCore.Models
 {
     public class BankAccount : Entity
     {

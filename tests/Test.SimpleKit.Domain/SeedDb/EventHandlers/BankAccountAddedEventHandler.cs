@@ -1,15 +1,15 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain.Events;
-using Test.SimpleKit.Repository.EfCore.SeedDb.Events;
+using Test.SimpleKit.Domain.SeedDb.Events;
 
-namespace Test.SimpleKit.Repository.EfCore.SeedDb.EventHandlers
+namespace Test.SimpleKit.Domain.SeedDb.EventHandlers
 {
     public class BankAccountAddedEventHandler : IDomainEventHandler<BankAccountAddedEvent>
     {
-        private Microsoft.EntityFrameworkCore.DbContext _dbContext;
+        private DbContext _dbContext;
 
-        public BankAccountAddedEventHandler(Microsoft.EntityFrameworkCore.DbContext dbContext)
+        public BankAccountAddedEventHandler(DbContext dbContext)
         {
             _dbContext = dbContext;
         }

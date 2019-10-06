@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain;
 using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Events;
 using SimpleKit.Domain.Repositories;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
@@ -25,6 +26,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             var entityEntry = _dbContext.Entry(entity);
             entityEntry.State = EntityState.Added;
             _dbContext.SaveChanges();
+            ProcessUncommittedEvents(entity);
             return Task.FromResult(entityEntry.Entity);
         }
 
@@ -32,6 +34,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         {
             var entityEntry = _dbContext.Entry(entity);
             entityEntry.State = EntityState.Modified;
+            ProcessUncommittedEvents(entity);
             return Task.FromResult(entity);
         }
 
@@ -39,7 +42,16 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         {
             var entityEntry = _dbContext.Entry(entity);
             entityEntry.State = EntityState.Deleted;
+            ProcessUncommittedEvents(entity);
             return Task.FromResult(entity);
+        }
+
+        private void ProcessUncommittedEvents(TEntity entity)
+        {
+            foreach (var domainEvent in entity.GetUncommittedEvents())
+            {
+                DomainEvents.Raise(domainEvent);
+            }
         }
     }
 }

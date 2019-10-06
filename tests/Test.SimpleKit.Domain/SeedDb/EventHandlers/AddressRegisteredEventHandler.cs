@@ -1,15 +1,15 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain.Events;
-using Test.SimpleKit.Repository.EfCore.SeedDb.Events;
+using Test.SimpleKit.Domain.SeedDb.Events;
 
-namespace Test.SimpleKit.Repository.EfCore.SeedDb.EventHandlers
+namespace Test.SimpleKit.Domain.SeedDb.EventHandlers
 {
     public class AddressRegisteredEventHandler : IDomainEventHandler<AddressRegisteredEvent>
     {
-        private Microsoft.EntityFrameworkCore.DbContext _context;
+        private DbContext _context;
 
-        public AddressRegisteredEventHandler(Microsoft.EntityFrameworkCore.DbContext context)
+        public AddressRegisteredEventHandler(DbContext context)
         {
             _context = context;
         }
@@ -23,7 +23,9 @@ namespace Test.SimpleKit.Repository.EfCore.SeedDb.EventHandlers
                 Street = @event.Street,
                 Ward = @event.Ward
             });
-            _context.Entry(person).State = EntityState.Modified;
+            var address = _context.Entry(person.PermenantAddress);
+            address.Property("PersonId").CurrentValue = person.Id;
+            address.State = EntityState.Added;
             return Task.CompletedTask;
         }
     }

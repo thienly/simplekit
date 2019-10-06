@@ -1,6 +1,6 @@
 using SimpleKit.Domain;
 
-namespace Test.SimpleKit.Repository.EfCore.SeedDb
+namespace Test.SimpleKit.Domain.SeedDb
 {
     public class Address : ValueObject<Address>
     {

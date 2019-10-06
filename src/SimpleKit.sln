@@ -16,6 +16,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Repository.Redis"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.SimpleKit.Repository.EfCore", "..\tests\Test.SimpleKit.Repository.EfCore\Test.SimpleKit.Repository.EfCore.csproj", "{7D862564-DB44-4A8C-B563-C586C3169DB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.DatabaGenerator", "..\tests\Test.DatabaGenerator\Test.DatabaGenerator.csproj", "{268FED62-10A2-4B81-943B-AB23B52A73C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2BEE6AAF-30CC-44DA-B30A-7E9511E91949}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApiWithEfCore", "..\samples\SampleApiWithEfCore\SampleApiWithEfCore.csproj", "{5FEF72C6-3857-4264-AABF-B0764507D468}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,10 +56,20 @@ Global
 		{7D862564-DB44-4A8C-B563-C586C3169DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D862564-DB44-4A8C-B563-C586C3169DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D862564-DB44-4A8C-B563-C586C3169DB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{268FED62-10A2-4B81-943B-AB23B52A73C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{268FED62-10A2-4B81-943B-AB23B52A73C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{268FED62-10A2-4B81-943B-AB23B52A73C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{268FED62-10A2-4B81-943B-AB23B52A73C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FEF72C6-3857-4264-AABF-B0764507D468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FEF72C6-3857-4264-AABF-B0764507D468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FEF72C6-3857-4264-AABF-B0764507D468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FEF72C6-3857-4264-AABF-B0764507D468}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DE33E6E2-D405-462B-83A0-2AFBB0F2C0F3} = {36D05742-EF49-428E-911C-FE73B93C23EF}
 		{E6BA199B-976C-4CCF-B092-CB955740488D} = {36D05742-EF49-428E-911C-FE73B93C23EF}
 		{7D862564-DB44-4A8C-B563-C586C3169DB4} = {36D05742-EF49-428E-911C-FE73B93C23EF}
+		{268FED62-10A2-4B81-943B-AB23B52A73C5} = {36D05742-EF49-428E-911C-FE73B93C23EF}
+		{5FEF72C6-3857-4264-AABF-B0764507D468} = {2BEE6AAF-30CC-44DA-B30A-7E9511E91949}
 	EndGlobalSection
 EndGlobal

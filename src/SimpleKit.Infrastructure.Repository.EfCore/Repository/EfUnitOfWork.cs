@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,9 +15,10 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
     public class EfUnitOfWork : IUnitOfWork
     {
         private readonly DbContext _dbContext;
-        private Dictionary<Type,object> _repositories = new Dictionary<Type, object>();
-        private IDbContextTransaction _transaction; // only for each request
+        private Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
+        private IDbContextTransaction _transaction; 
         private ILogger<EfUnitOfWork> _logger;
+
         public EfUnitOfWork(DbContext dbContext, IDbContextTransaction dbTransaction, ILogger<EfUnitOfWork> logger)
         {
             _dbContext = dbContext;
@@ -31,7 +31,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             try
             {
                 _logger.LogInformation($"Starting transaction {_transaction.TransactionId}");
-                ProcessUnCommittedEvents();
                 var result = _dbContext.SaveChangesAsync(cancellationToken);
                 _transaction.Commit();
                 _logger.LogInformation("Ending transaction");
@@ -49,7 +48,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             try
             {
                 _logger.LogInformation($"Starting transaction {_transaction.TransactionId}");
-                ProcessUnCommittedEvents();
                 var result = _dbContext.SaveChanges();
                 _transaction.Commit();
                 _logger.LogInformation("Ending transaction");
@@ -60,19 +58,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
                 _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", e);
                 throw;
             }
-        }
-
-        private void ProcessUnCommittedEvents()
-        {
-            foreach (var key in _repositories.Keys)
-            {
-                var entity = key as IAggregateRoot;
-                foreach (var uncommittedEvent in entity.GetUncommittedEvents())
-                {
-                    DomainEvents.Raise(uncommittedEvent);
-                }
-            }
-            _repositories.Clear();
         }
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IAggregateRoot
         {
@@ -85,6 +70,5 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             _repositories.Add(typeof(TEntity), repository);
             return repository;
         }
-        
     }
 }

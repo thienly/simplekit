@@ -8,8 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />
+        <PackageReference Include="Castle.Windsor" Version="5.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
         <PackageReference Include="xunit" Version="2.4.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -18,6 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\SimpleKit.Domain\SimpleKit.Domain.csproj" />
       <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Repository.EfCore\SimpleKit.Infrastructure.Repository.EfCore.csproj" />
+      <ProjectReference Include="..\Test.SimpleKit.Domain\Test.SimpleKit.Domain.csproj" />
     </ItemGroup>
 
 </Project>

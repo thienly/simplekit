@@ -1,4 +1,4 @@
-namespace Test.SimpleKit.Repository.EfCore.SeedDb.Events
+namespace Test.SimpleKit.Domain.SeedDb.Events
 {
     public class AddressRegisteredEvent : PersonEvent
     {

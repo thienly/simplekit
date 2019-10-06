@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SampleApiWithEfCore.Models.Events;
 using SimpleKit.Domain.Entities;
-using Test.SimpleKit.Repository.EfCore.SeedDb.Events;
 
-namespace Test.SimpleKit.Repository.EfCore.SeedDb
+namespace SampleApiWithEfCore.Models
 {
     public class Person: AggregateRootWithId<int>
     {
