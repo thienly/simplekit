@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Test.DatabaGenerator;
+using Test.DatabaseGenerator.DbContext;
 
 namespace Test.DatabaGenerator.Migrations
 {
     [DbContext(typeof(SuiteDbContext))]
-    [Migration("20191004080707_IntialDatabase")]
-    partial class IntialDatabase
+    [Migration("20191007233901_InitialDatabase")]
+    partial class InitialDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -107,7 +107,7 @@ namespace Test.DatabaGenerator.Migrations
 
                             b1.ToTable("Address");
 
-                            b1.WithOwner("Person")
+                            b1.WithOwner()
                                 .HasForeignKey("PersonId");
                         });
                 });

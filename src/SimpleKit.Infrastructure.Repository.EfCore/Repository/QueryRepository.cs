@@ -2,14 +2,16 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SimpleKit.Domain;
 using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Repositories;
+using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
-    public class QueryRepository<TEntity> : IQueryRepository<TEntity> where TEntity : class, IAggregateRoot
+    public class EfQueryRepository<TEntity> : IQueryRepository<TEntity> where TEntity : class, IAggregateRoot
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public QueryRepository(DbContext dbContext)
+        public EfQueryRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

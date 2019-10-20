@@ -1,7 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
-using SimpleKit.Domain;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Domain.Events;
 
@@ -10,14 +11,16 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
     public class AppDbContext : DbContext
     {
         private ILogger<AppDbContext> _logger;
-        private IDbContextTransaction _transaction;
-        public AppDbContext(ILogger<AppDbContext> logger, IDbContextTransaction transaction)
-        {
-            _logger = logger;
-            _transaction = transaction;
-        }
 
-        public override int SaveChanges()
+        public AppDbContext()
+        {
+            
+        }
+        public AppDbContext(DbContextOptions options) : base(options)
+        {
+            
+        }
+        private void ProcessUncommittedEvents()
         {
             foreach (var entityEntry in base.ChangeTracker.Entries())
             {
@@ -30,7 +33,36 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
                     }
                 }
             }
-            return base.SaveChanges();
+        }
+        public override int SaveChanges()
+        {
+            ProcessUncommittedEvents();
+            var affectedRows = base.SaveChanges();
+            ProcessAfterSaveChanges();
+            return affectedRows;
+        }
+
+        private void ProcessAfterSaveChanges()
+        {
+            foreach (var entityEntry in this.ChangeTracker.Entries())
+            {
+                entityEntry.State = EntityState.Detached;
+            }
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            ProcessUncommittedEvents();
+            var affectedRows = base.SaveChangesAsync(cancellationToken);
+            ProcessAfterSaveChanges();
+            return affectedRows;
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
+        {
+            var affectedRows=  base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            ProcessAfterSaveChanges();
+            return affectedRows;
         }
     }
 }

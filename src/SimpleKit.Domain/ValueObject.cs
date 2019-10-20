@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace SimpleKit.Domain
@@ -8,7 +9,7 @@ namespace SimpleKit.Domain
         protected new virtual bool Equals(object x, object y)
         {
             if (x == null && y == null)
-                return false;
+                return true;
             if (x == null || y == null)
                 return false;
             if (x.GetType().IsInstanceOfType(y) || y.GetType().IsInstanceOfType(x))

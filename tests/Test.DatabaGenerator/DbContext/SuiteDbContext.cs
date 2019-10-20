@@ -2,9 +2,10 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SimpleKit.Domain;
+using SimpleKit.Infrastructure.Repository.EfCore.Db;
 using Test.SimpleKit.Domain.SeedDb;
 
-namespace Test.SimpleKit.Repository.EfCore.DbContext
+namespace Test.DatabaseGenerator.DbContext
 {
     public static class EntityTypeConfigurationHelper
     {
@@ -51,19 +52,13 @@ namespace Test.SimpleKit.Repository.EfCore.DbContext
             builder.Property(x => x.BankName).HasMaxLength(100).IsRequired();
         }
     }
-    public class SuiteDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class SuiteDbContext : AppDbContext
     {
         public DbSet<Person> Person { get; set; }
         public DbSet<BankAccount> BankAccount { get; set; }
-        public SuiteDbContext(DbContextOptions<SuiteDbContext> options) : base(options)
+        public SuiteDbContext(DbContextOptions options): base(options)
         {
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new PersonEntityTypeConfiguration());

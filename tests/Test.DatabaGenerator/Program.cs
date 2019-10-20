@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace Test.DatabaGenerator
 {
@@ -6,7 +8,7 @@ namespace Test.DatabaGenerator
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+           
         }
     }
 }

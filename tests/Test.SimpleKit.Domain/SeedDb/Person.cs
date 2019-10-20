@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Identity;
 using Test.SimpleKit.Domain.SeedDb.Events;
 
 namespace Test.SimpleKit.Domain.SeedDb
@@ -20,7 +21,7 @@ namespace Test.SimpleKit.Domain.SeedDb
         }
 
         public string Name { get; private set; }
-        public Address PermenantAddress { get; private set; }
+            public Address PermenantAddress { get; private set; }
 
         public void RegisterAddress(Address address)
         {

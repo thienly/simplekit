@@ -3,8 +3,8 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Test.DatabaGenerator;
+using Test.DatabaseGenerator.DbContext;
+
 
 namespace Test.DatabaGenerator.Migrations
 {
@@ -105,7 +105,7 @@ namespace Test.DatabaGenerator.Migrations
 
                             b1.ToTable("Address");
 
-                            b1.WithOwner("Person")
+                            b1.WithOwner()
                                 .HasForeignKey("PersonId");
                         });
                 });

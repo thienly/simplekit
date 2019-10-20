@@ -14,13 +14,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Repository.Redis", "SimpleKit.Repository.Redis\SimpleKit.Repository.Redis.csproj", "{25A2B91E-BA3A-491F-B642-AC72E1B523D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.SimpleKit.Repository.EfCore", "..\tests\Test.SimpleKit.Repository.EfCore\Test.SimpleKit.Repository.EfCore.csproj", "{7D862564-DB44-4A8C-B563-C586C3169DB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.SimpleKit.Repository.EfCore.SqlServer", "..\tests\Test.SimpleKit.Repository.EfCore.SqlServer\Test.SimpleKit.Repository.EfCore.SqlServer.csproj", "{7D862564-DB44-4A8C-B563-C586C3169DB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.DatabaGenerator", "..\tests\Test.DatabaGenerator\Test.DatabaGenerator.csproj", "{268FED62-10A2-4B81-943B-AB23B52A73C5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2BEE6AAF-30CC-44DA-B30A-7E9511E91949}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApiWithEfCore", "..\samples\SampleApiWithEfCore\SampleApiWithEfCore.csproj", "{5FEF72C6-3857-4264-AABF-B0764507D468}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Repository.EfCore.SqlServer", "SimpleKit.Infrastructure.Repository.EfCore.SqlServer\SimpleKit.Infrastructure.Repository.EfCore.SqlServer.csproj", "{1D76E2EB-9A89-4314-8653-8A80D88E979C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Repository.EfCore.MySql", "SimpleKit.Infrastructure.Repository.EfCore.MySql\SimpleKit.Infrastructure.Repository.EfCore.MySql.csproj", "{5CF213A2-79AD-40C1-80BA-C53DDC2D3A91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Bus", "SimpleKit.Infrastructure.Bus\SimpleKit.Infrastructure.Bus.csproj", "{6942EF99-59E3-432D-B7FB-259B8498B345}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Bus.RabbitMq", "SimpleKit.Infrastructure.Bus.RabbitMq\SimpleKit.Infrastructure.Bus.RabbitMq.csproj", "{F2AA614F-B70A-4E0F-B519-32ED4BFB9178}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleKit.Infrastructure.Bus.Kafka", "SimpleKit.Infrastructure.Bus.Kafka\SimpleKit.Infrastructure.Bus.Kafka.csproj", "{CB4480BE-4F1D-4301-B817-4B2912044003}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +74,26 @@ Global
 		{5FEF72C6-3857-4264-AABF-B0764507D468}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FEF72C6-3857-4264-AABF-B0764507D468}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FEF72C6-3857-4264-AABF-B0764507D468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D76E2EB-9A89-4314-8653-8A80D88E979C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D76E2EB-9A89-4314-8653-8A80D88E979C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D76E2EB-9A89-4314-8653-8A80D88E979C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D76E2EB-9A89-4314-8653-8A80D88E979C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CF213A2-79AD-40C1-80BA-C53DDC2D3A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CF213A2-79AD-40C1-80BA-C53DDC2D3A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CF213A2-79AD-40C1-80BA-C53DDC2D3A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CF213A2-79AD-40C1-80BA-C53DDC2D3A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6942EF99-59E3-432D-B7FB-259B8498B345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6942EF99-59E3-432D-B7FB-259B8498B345}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6942EF99-59E3-432D-B7FB-259B8498B345}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6942EF99-59E3-432D-B7FB-259B8498B345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2AA614F-B70A-4E0F-B519-32ED4BFB9178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2AA614F-B70A-4E0F-B519-32ED4BFB9178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2AA614F-B70A-4E0F-B519-32ED4BFB9178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2AA614F-B70A-4E0F-B519-32ED4BFB9178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB4480BE-4F1D-4301-B817-4B2912044003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB4480BE-4F1D-4301-B817-4B2912044003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB4480BE-4F1D-4301-B817-4B2912044003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB4480BE-4F1D-4301-B817-4B2912044003}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DE33E6E2-D405-462B-83A0-2AFBB0F2C0F3} = {36D05742-EF49-428E-911C-FE73B93C23EF}

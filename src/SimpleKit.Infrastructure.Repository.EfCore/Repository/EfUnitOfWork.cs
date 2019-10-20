@@ -1,44 +1,58 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using SimpleKit.Domain.Entities;
-using SimpleKit.Domain.Events;
 using SimpleKit.Domain.Repositories;
+using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
-    public class EfUnitOfWork : IUnitOfWork
+    public delegate object RepositoryFactory(Type type);
+    public sealed class EfUnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _dbContext;
+        private readonly AppDbContext _dbContext;
+        private readonly IDbContextTransaction _transaction;
+        private readonly ILogger<EfUnitOfWork> _logger;
         private Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
-        private IDbContextTransaction _transaction; 
-        private ILogger<EfUnitOfWork> _logger;
+        private RepositoryFactory _repositoryFactory;
 
-        public EfUnitOfWork(DbContext dbContext, IDbContextTransaction dbTransaction, ILogger<EfUnitOfWork> logger)
+        public EfUnitOfWork(AppDbContext dbContext, IDbContextTransaction transaction, ILogger<EfUnitOfWork> logger,
+            RepositoryFactory repositoryFactory = null)
         {
             _dbContext = dbContext;
-            _transaction = dbTransaction;
+            _transaction = transaction;
             _logger = logger;
+            _repositoryFactory = repositoryFactory;
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             try
             {
-                _logger.LogInformation($"Starting transaction {_transaction.TransactionId}");
                 var result = _dbContext.SaveChangesAsync(cancellationToken);
                 _transaction.Commit();
-                _logger.LogInformation("Ending transaction");
                 return result;
             }
-            catch (SimpleKitTransactionException e)
+            catch (DbUpdateConcurrencyException e)
             {
+                _transaction.Rollback();
+                _logger.LogError($"There is concurrency error when trying to commit transaction {_transaction.TransactionId}", e);
+                throw;
+            }
+            catch (DbUpdateException e)
+            {
+                _transaction.Rollback();
                 _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", e);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _transaction.Rollback();
+                _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", ex);
                 throw;
             }
         }
@@ -53,11 +67,26 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
                 _logger.LogInformation("Ending transaction");
                 return result;
             }
-            catch (SimpleKitTransactionException e)
+            catch (DbUpdateConcurrencyException e)
             {
+                _transaction.Rollback();
+                _logger.LogError(
+                    $"There is concurrency error when trying to commit transaction {_transaction.TransactionId}", e);
+                throw;
+            }
+            catch (DbUpdateException e)
+            {
+                _transaction.Rollback();
                 _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", e);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _transaction.Rollback();
+                _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", ex);
+                throw;
+            }
+            
         }
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IAggregateRoot
         {
@@ -66,7 +95,15 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
                 return _repositories[typeof(TEntity)] as IRepository<TEntity>;
             }
 
-            var repository = new EfRepository<TEntity>(_dbContext);
+            IRepository<TEntity> repository = null;
+            if (_repositoryFactory == null)
+            {
+                repository = new EfRepository<TEntity>(_dbContext);
+            }
+            else
+            {
+                repository = _repositoryFactory(typeof(IRepository<TEntity>)) as IRepository<TEntity>;
+            }
             _repositories.Add(typeof(TEntity), repository);
             return repository;
         }

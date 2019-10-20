@@ -1,21 +1,21 @@
-using Microsoft.EntityFrameworkCore;
-using SimpleKit.Domain;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 using SimpleKit.Domain.Entities;
+using SimpleKit.Domain.Repositories;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
     public class QueryRepositoryFactory : IQueryRepositoryFactory
     {
-        private DbContext _dbContext;
-
-        public QueryRepositoryFactory(DbContext dbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public QueryRepositoryFactory(IServiceProvider serviceProvider)
         {
-            _dbContext = dbContext;
+            _serviceProvider = serviceProvider;
         }
-        
+
         public IQueryRepository<TEntity> Create<TEntity>() where TEntity : class, IAggregateRoot
         {
-            return new QueryRepository<TEntity>(_dbContext);
+            return _serviceProvider.GetService<IQueryRepository<TEntity>>();
         }
     }
 }

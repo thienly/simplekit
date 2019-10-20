@@ -1,19 +1,16 @@
 using System;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Castle.Core.Logging;
 using Castle.Windsor;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Options;
-using Test.SimpleKit.Repository.EfCore.DbContext;
+using Test.DatabaseGenerator.DbContext;
+using Test.SimpleKit.Domain.SeedDb;
 using Xunit.Abstractions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Test.SimpleKit.Repository.EfCore
+namespace Test.SimpleKit.Repository.EfCore.Base
 {
     public class TestWithSqlite: IDisposable
     {
@@ -29,6 +26,7 @@ namespace Test.SimpleKit.Repository.EfCore
             _fixture = new Fixture();
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             _fixture.Customize(new AutoMoqCustomization());
+            
             var optionsBuilder = new DbContextOptionsBuilder<SuiteDbContext>();
             _connection = new SqliteConnection(_connectionString);
             _connection.Open();
@@ -48,7 +46,27 @@ namespace Test.SimpleKit.Repository.EfCore
         public void Dispose()
         {
             _connection.Close();
+    
             SuiteDbContext.Dispose();
+            
+        }
+
+        protected void SeedData()
+        {
+            var persons = Fixture.Build<Person>().FromSeed(p =>
+            {
+                var person = new Person("T1");
+                person.RegisterAddress(new Address()
+                {
+                    Street = "Street1",
+                    AddressNumber = "AddressNumber1",
+                    Ward = "Ward1"
+                });
+                person.AddBankAccount(new BankAccount("ACB"));
+                return person;
+            }).CreateMany<Person>(100);
+            SuiteDbContext.Set<Person>().AddRange(persons);
+            SuiteDbContext.SaveChanges();
         }
     }
 
