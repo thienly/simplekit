@@ -39,7 +39,9 @@ namespace SimpleKit.Domain
 
         public static bool operator == (ValueObject<T> x, ValueObject<T> y)
         {
-            return x.Equals(y);
+            if (ReferenceEquals(null, x))
+                return false;
+            return  x.Equals(y);
         }
 
         public static bool operator !=(ValueObject<T> x, ValueObject<T> y)

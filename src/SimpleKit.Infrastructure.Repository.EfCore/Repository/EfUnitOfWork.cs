@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Domain.Repositories;
 using SimpleKit.Infrastructure.Repository.EfCore.Db;
@@ -12,6 +13,7 @@ using SimpleKit.Infrastructure.Repository.EfCore.Db;
 namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 {
     public delegate object RepositoryFactory(Type type);
+
     public sealed class EfUnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _dbContext;
@@ -19,14 +21,19 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         private readonly ILogger<EfUnitOfWork> _logger;
         private Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
         private RepositoryFactory _repositoryFactory;
-
-        public EfUnitOfWork(AppDbContext dbContext, IDbContextTransaction transaction, ILogger<EfUnitOfWork> logger,
+        private ILoggerFactory _loggerFactory;
+        
+        public EfUnitOfWork(AppDbContext dbContext, IDbContextTransaction transaction, ILoggerFactory loggerFactory = null,
             RepositoryFactory repositoryFactory = null)
         {
             _dbContext = dbContext;
             _transaction = transaction;
-            _logger = logger;
             _repositoryFactory = repositoryFactory;
+            _loggerFactory = loggerFactory;
+            _logger = _loggerFactory ==
+                      null
+                ? NullLogger<EfUnitOfWork>.Instance
+                : _loggerFactory.CreateLogger<EfUnitOfWork>();
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
@@ -40,7 +47,8 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             catch (DbUpdateConcurrencyException e)
             {
                 _transaction.Rollback();
-                _logger.LogError($"There is concurrency error when trying to commit transaction {_transaction.TransactionId}", e);
+                _logger.LogError(
+                    $"There is concurrency error when trying to commit transaction {_transaction.TransactionId}", e);
                 throw;
             }
             catch (DbUpdateException e)
@@ -86,24 +94,15 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
                 _logger.LogError($"There is error when trying to commit transaction {_transaction.TransactionId}", ex);
                 throw;
             }
-            
         }
+
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IAggregateRoot
         {
             if (_repositories.ContainsKey(typeof(TEntity)))
             {
                 return _repositories[typeof(TEntity)] as IRepository<TEntity>;
             }
-
-            IRepository<TEntity> repository = null;
-            if (_repositoryFactory == null)
-            {
-                repository = new EfRepository<TEntity>(_dbContext);
-            }
-            else
-            {
-                repository = _repositoryFactory(typeof(IRepository<TEntity>)) as IRepository<TEntity>;
-            }
+            var repository = _repositoryFactory(typeof(IRepository<TEntity>)) as IRepository<TEntity>;
             _repositories.Add(typeof(TEntity), repository);
             return repository;
         }

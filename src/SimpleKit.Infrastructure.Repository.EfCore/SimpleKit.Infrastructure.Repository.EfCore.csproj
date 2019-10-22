@@ -7,6 +7,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SimpleKit.Domain\SimpleKit.Domain.csproj" />
+      <ProjectReference Include="..\SimpleKit.Infrastructure.Utils\SimpleKit.Infrastructure.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>

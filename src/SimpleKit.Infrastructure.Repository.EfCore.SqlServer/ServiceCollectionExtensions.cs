@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
 {
@@ -10,10 +9,14 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
             Type type)
         {
             collection.AddSingleton<IDbContextFactory, DbContextFactory>();
-            collection.AddScoped<AppDbContext>(provider => provider.GetService<IDbContextFactory>().Create(type));
+            collection.AddScoped(provider => provider.GetService<IDbContextFactory>().Create(type));
             collection.AddScoped(type,
                 provider => provider.GetService<IDbContextFactory>().Create(type));
             return collection;
+        }
+        public static IServiceCollection AddEfCoreSqlTemplate(this IServiceCollection collection, Type typeOfDbContext)
+        {
+            return collection.AddSimpleKitEfCore().AddSimpleKitEfCoreSql(typeOfDbContext);
         }
     }
 }

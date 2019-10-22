@@ -23,7 +23,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .EnableDetailedErrors()
                 .UseLoggerFactory(_loggerFactory);
-            // need to improve
             var dbContext =(T)Activator.CreateInstance(typeof(T),optionsBuilder.Options);
             return dbContext;
         }
@@ -35,7 +34,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .EnableDetailedErrors()
                 .UseLoggerFactory(_loggerFactory);
-            // need to improve
             var dbContext =Activator.CreateInstance(type,optionsBuilder.Options);
             return dbContext as AppDbContext;
         }

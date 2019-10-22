@@ -37,6 +37,7 @@ namespace Test.SimpleKit.Repository.EfCore
                 x.GetService<SuiteDbContext>().Database.BeginTransaction());
             serviceCollection.AddSingleton<ILoggerFactory>(new LoggerFactory(new[]
                 {new UnitTestLoggerProvider(_testOutputHelper)}));
+            
             serviceCollection.AddSimpleKitEfCore()
                 .AddSimpleKitEfCoreSql(typeof(SuiteDbContext));
             _serviceProvider = serviceCollection.BuildServiceProvider();
