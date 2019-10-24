@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Infrastructure.Repository.MongoDb.Abstractions;
+using SimpleKit.Infrastructure.Repository.MongoDb.Implementations;
 
 namespace SimpleKit.Infrastructure.Repository.MongoDb.Db
 {

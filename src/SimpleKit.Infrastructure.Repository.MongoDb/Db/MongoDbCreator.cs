@@ -26,7 +26,7 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Db
             return mongoCollection.InsertOneAsync(document);
         }
 
-        public Task AddManyAsync<TDocument>(IEnumerable<TDocument> documents) where TDocument: AggregateRootBase
+        public Task AddMany<TDocument,TKey>(IEnumerable<TDocument> documents) where TDocument: AggregateRootWithId<TKey>
         {
             var mongoCollection = _mongoDbContext.GetCollection<TDocument>();
             return mongoCollection.InsertManyAsync(documents);

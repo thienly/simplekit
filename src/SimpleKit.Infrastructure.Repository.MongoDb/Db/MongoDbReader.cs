@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Infrastructure.Repository.MongoDb.Abstractions;
+using SimpleKit.Infrastructure.Repository.MongoDb.Implementations;
 
 namespace SimpleKit.Infrastructure.Repository.MongoDb.Db
 {
@@ -38,19 +40,24 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Db
             return mongoCollection.Find(filterDefinition).SingleOrDefaultAsync();
         }
 
+        public IFindFluent<TDocument, TDocument> Find<TDocument, TKey>(
+            FilterDefinition<TDocument> filterDefinition) where TDocument : AggregateRootWithId<TKey>
+        {
+            return _dbContext.GetCollection<TDocument>().Find(filterDefinition);
+        }
         public IFindFluent<TDocument, TDocument> Find<TDocument,TKey>(Expression<Func<TDocument, bool>> filter)
             where TDocument : AggregateRootWithId<TKey>
         {
             return _dbContext.GetCollection<TDocument>().Find(filter);
         }
 
-        public Task<IAsyncCursor<TResult>> AsyncCursor<TDocument, TKey, TResult>(
+        public Task<IAsyncCursor<TResult>> AsyncCursorAsync<TDocument, TKey, TResult>(
             PipelineDefinition<TDocument, TResult> pipelineDefinition) where TDocument : AggregateRootWithId<TKey>
         {
             return _dbContext.GetCollection<TDocument>().AggregateAsync(pipelineDefinition);
         }
 
-        public IAsyncCursor<TResult> Cursor<TDocument, TKey, TResult>(
+        public IAsyncCursor<TResult> AsyncCursor<TDocument, TKey, TResult>(
             PipelineDefinition<TDocument, TResult> pipelineDefinition) where TDocument : AggregateRootWithId<TKey>
         {
             return _dbContext.GetCollection<TDocument>().Aggregate(pipelineDefinition);

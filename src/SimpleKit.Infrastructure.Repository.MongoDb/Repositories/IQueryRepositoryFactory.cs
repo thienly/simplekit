@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using MongoDB.Driver;
+using System;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Domain.Repositories;
 
@@ -7,15 +6,28 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
 {
     public interface IQueryRepositoryFactory
     {
-        
+        IQueryRepository<TEntity> Create<TEntity>() where TEntity : class, IAggregateRoot;
     }
 
-    public interface IMongoRepositoryQuery<TEntity, TKey> : IQueryRepository<TEntity>
-        where TEntity : AggregateRootWithId<TKey>
+    public class QueryRepositoryFactory : IQueryRepositoryFactory
     {
-        IFindFluent<TEntity,TResult> Find<TResult>(FilterDefinition<TEntity> filterDefinition);
-        Task<IFindFluent<TEntity,TResult>> FindAsync<TResult>(FilterDefinition<TEntity> filterDefinition);
-        IAsyncCursor<TEntity> AsyncCursor(FilterDefinition<TEntity> filterDefinition);
-        Task<IAsyncCursor<TEntity>> AsyncCursorAsync(FilterDefinition<TEntity> filterDefinition);
+        private IServiceProvider _serviceProvider;
+
+        public QueryRepositoryFactory(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public IQueryRepository<TEntity> Create<TEntity>() where TEntity : class,IAggregateRoot
+        {
+            Type baseT = typeof(TEntity);
+            while (baseT.BaseType != typeof(object))
+            {
+                baseT = baseT.BaseType;
+            }
+            var tKey = baseT.GetGenericArguments()[0];
+            return (IQueryRepository<TEntity>) _serviceProvider.GetService(
+                typeof(MongoQueryRepository<,>).MakeGenericType(typeof(TEntity),tKey));
+        }
     }
 }

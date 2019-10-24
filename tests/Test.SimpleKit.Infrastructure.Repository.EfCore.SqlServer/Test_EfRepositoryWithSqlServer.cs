@@ -20,12 +20,12 @@ using Xunit.Abstractions;
 
 namespace Test.SimpleKit.Repository.EfCore
 {
-    public class EfRepositoryWithSqlServer : TestWithSqlServer
+    public class Test_EfRepositoryWithSqlServer : TestWithSqlServer
     {
         private ITestOutputHelper _testOutputHelper;
         private IServiceProvider _serviceProvider;
 
-        public EfRepositoryWithSqlServer(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        public Test_EfRepositoryWithSqlServer(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
             var serviceCollection = new ServiceCollection();

@@ -1,16 +1,22 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SimpleKit.Domain.Entities;
-using SimpleKit.Domain.Events;
 using SimpleKit.Domain.Repositories;
-using SimpleKit.Infrastructure.Repository.MongoDb.Abstractions;
 
 namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
 {
-    public delegate IRepository<TDocument> RepositoryFactory<TDocument,TKey>() where TDocument : AggregateRootWithId<TKey>;
+    public delegate object RepositoryFactory(Type type);
+
     public class MongoDbUnitOfWork : IUnitOfWork
     {
-        
+        private RepositoryFactory _repositoryFactory;
+
+        public MongoDbUnitOfWork(RepositoryFactory repositoryFactory)
+        {
+            _repositoryFactory = repositoryFactory;
+        }
+
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult(1);
@@ -23,52 +29,13 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
 
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class, IAggregateRoot
         {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class MongoDbRepository<TEntity, TKey> : IRepository<TEntity> where TEntity : AggregateRootWithId<TKey>
-    {
-        private readonly IBaseMongoRepository_Add _repositoryAdd;
-        private readonly IBaseMongoRepository_Update _repositoryUpdate;
-        private readonly IBaseMongoRepository_Delete _repositoryDelete;
-
-        public MongoDbRepository(IBaseMongoRepository_Add repositoryAdd, IBaseMongoRepository_Update repositoryUpdate,
-            IBaseMongoRepository_Delete repositoryDelete)
-        {
-            _repositoryAdd = repositoryAdd;
-            _repositoryUpdate = repositoryUpdate;
-            _repositoryDelete = repositoryDelete;
-        }
-
-        public async Task<TEntity> AddAsync(TEntity entity)
-        {
-            await _repositoryAdd.AddAsync<TEntity,TKey>(entity);
-            DomainDispatcher(entity);
-            return entity;
-        }
-
-        public async Task<TEntity> UpdateAsync(TEntity entity)
-        {
-            await _repositoryUpdate.UpdateAsync<TEntity, TKey>(entity);
-            DomainDispatcher(entity);
-            return entity;
-        }
-
-        public async Task DeleteAsync(TEntity entity)
-        {
-            await _repositoryDelete.DeleteAsync<TEntity, TKey>(entity);
-            DomainDispatcher(entity);
-        }
-
-        private void DomainDispatcher(TEntity entity)
-        {
-            var readOnlyCollection = entity.GetUncommittedEvents();
-            foreach (var @event in readOnlyCollection)
+            Type baseT = typeof(TEntity);
+            while (baseT.BaseType != typeof(object))
             {
-                DomainEvents.Raise(@event);
+                baseT = baseT.BaseType;
             }
-            entity.ClearDomainEvents();
+            var keyType = baseT.GetGenericArguments()[0];
+            return _repositoryFactory(typeof(MongoRepository<,>).MakeGenericType(typeof(TEntity),keyType)) as IRepository<TEntity>;
         }
     }
 }
