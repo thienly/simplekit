@@ -22,9 +22,15 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions
         where TEntity: class, IAggregateRoot
         {
             var queryable = repository.Queryable().AsNoTracking();
-            var includableQueryable = includes.Aggregate(queryable,((current, include) => current.Include(include)));
-            var aggregateRoots = includableQueryable.Where(filter).ToList();
-            return Task.FromResult(aggregateRoots);
+            if (includes != null)
+            {
+                var includableQueryable =
+                    includes.Aggregate(queryable, ((current, include) => current.Include(include)));
+                var aggregateRoots = includableQueryable.Where(filter).ToList();
+                return Task.FromResult(aggregateRoots);
+            }
+            var roots = queryable.Where(filter).ToList();
+            return Task.FromResult(roots);
         }
         public static Task<PaginatedItem<TEntity>> Paging<TEntity>(this IQueryRepository<TEntity> repository,
             int pageIndex, int numberOfItemsPerPage, Expression<Func<TEntity, bool>> filter,
@@ -42,7 +48,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions
                 aggregateRoots = orderby(aggregateRoots);
             }    
             var totalItems = aggregateRoots.Count();
-            var entities = aggregateRoots.Skip((pageIndex + 1) * numberOfItemsPerPage).Take(numberOfItemsPerPage)
+            var entities = aggregateRoots.Skip((pageIndex) * numberOfItemsPerPage).Take(numberOfItemsPerPage)
                 .Where(filter).ToList();
             return Task.FromResult(new PaginatedItem<TEntity>(totalItems, pageIndex,
                 numberOfItemsPerPage, entities));

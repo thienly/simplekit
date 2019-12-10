@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SimpleKit.Domain.Events;
@@ -39,7 +40,6 @@ namespace SimpleKit.Domain.Entities
         {
             return _uncommitedDomainEvents.ToList();
         }
-
-        public int Version { get; set; }
+        public byte[] Version { get; set; }
     }
 }

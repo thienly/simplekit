@@ -8,7 +8,7 @@ using SimpleKit.Domain.Events;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.Db
 {
-    public class AppDbContext : DbContext
+    public abstract class AppDbContext : DbContext
     {
         private ILogger<AppDbContext> _logger;
 
@@ -18,9 +18,10 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
         }
         public AppDbContext(DbContextOptions options) : base(options)
         {
-            
         }
-        private void ProcessUncommittedEvents()
+
+        public abstract void PreProcessSaveChanges();
+        private void PublishUncommitedDomainEvents()
         {
             foreach (var entityEntry in base.ChangeTracker.Entries())
             {
@@ -36,7 +37,8 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
         }
         public override int SaveChanges()
         {
-            ProcessUncommittedEvents();
+            PublishUncommitedDomainEvents();
+            PreProcessSaveChanges();
             var affectedRows = base.SaveChanges();
             ProcessAfterSaveChanges();
             return affectedRows;
@@ -52,7 +54,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            ProcessUncommittedEvents();
+            PublishUncommitedDomainEvents();
             var affectedRows = base.SaveChangesAsync(cancellationToken);
             ProcessAfterSaveChanges();
             return affectedRows;

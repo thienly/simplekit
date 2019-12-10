@@ -32,11 +32,19 @@ namespace SimpleKit.Domain.Identity
 
         public static bool operator ==(IdentityBase<TId> x, IdentityBase<TId> y)
         {
+            if (ReferenceEquals(x, null) && ReferenceEquals(y, null))
+                return true;
+            if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
+                return false;
             return x.Equals(y);
         }
 
         public static bool operator !=(IdentityBase<TId> x, IdentityBase<TId> y)
         {
+            if (ReferenceEquals(x, null) && ReferenceEquals(y, null))
+                return false;
+            if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
+                return true;
             return !x.Equals(y);
         }
     }

@@ -7,6 +7,6 @@ namespace SimpleKit.Domain
         DateTime CreatedDate { get; set; }
         int  CreatedBy { get; set; }
         DateTime? UpdatedDate { get; set; }
-        int UpdatedBy { get; set; }
+        int? UpdatedBy { get; set; }
     }
 }

@@ -106,5 +106,11 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
             _repositories.Add(typeof(TEntity), repository);
             return repository;
         }
+
+        public void Dispose()
+        {
+            _dbContext?.Dispose();
+            _transaction?.Dispose();
+        }
     }
 }

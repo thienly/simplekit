@@ -12,9 +12,9 @@ using SimpleKit.Domain.Repositories;
 using SimpleKit.Infrastructure.Repository.EfCore;
 using SimpleKit.Infrastructure.Repository.EfCore.Extensions;
 using SimpleKit.Infrastructure.Repository.EfCore.SqlServer;
-using Test.DatabaseGenerator.DbContext;
-using Test.SimpleKit.Domain.SeedDb;
+using Test.SimpleKit.Base;
 using Test.SimpleKit.Repository.EfCore.Base;
+using Test.SimpleKit.Repository.EfCore.Base.SeedDb;
 using Xunit;
 using Xunit.Abstractions;
 

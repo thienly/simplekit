@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
 namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
 {

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.11.0" />
+        <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+        <PackageReference Include="xunit.abstractions" Version="2.0.2" />
+        <PackageReference Include="xunit.extensibility.core" Version="2.4.0" />
+    </ItemGroup>
+
+</Project>

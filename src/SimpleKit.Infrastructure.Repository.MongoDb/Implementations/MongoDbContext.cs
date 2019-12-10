@@ -17,6 +17,12 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Implementations
             Client = new MongoClient(mongoUrl);
             Database = Client.GetDatabase(mongoUrl.DatabaseName,new MongoDatabaseSettings());
         }
+        public MongoDbContext(string connectionString, string databaseName)
+        {
+            var mongoUrl = new MongoUrl(connectionString);
+            Client = new MongoClient(mongoUrl);
+            Database = Client.GetDatabase(databaseName);
+        }
 
         public MongoDbContext(string connection, MongoDatabaseSettings settings) : this(connection)
         {
@@ -39,7 +45,7 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Implementations
             return Database.GetCollection<TDocument>(GetCollectionName<TDocument>());
         }
 
-        private string GetCollectionName<TDocument>()
+        public string GetCollectionName<TDocument>()
         {
             var pluralizer = new Pluralizer();
             return pluralizer.Pluralize(typeof(TDocument).Name).ToLower();

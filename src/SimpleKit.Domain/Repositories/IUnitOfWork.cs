@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
@@ -5,7 +6,7 @@ using SimpleKit.Domain.Entities;
 
 namespace SimpleKit.Domain.Repositories
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork: IDisposable
     {
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         int SaveChanges();

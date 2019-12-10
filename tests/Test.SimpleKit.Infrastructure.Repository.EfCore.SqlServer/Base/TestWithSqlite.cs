@@ -5,10 +5,9 @@ using Castle.Windsor;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Test.DatabaseGenerator.DbContext;
-using Test.SimpleKit.Domain.SeedDb;
+using Test.SimpleKit.Base;
+using Test.SimpleKit.Repository.EfCore.Base.SeedDb;
 using Xunit.Abstractions;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Test.SimpleKit.Repository.EfCore.Base
 {
@@ -70,54 +69,5 @@ namespace Test.SimpleKit.Repository.EfCore.Base
         }
     }
 
-    public class UnitTestLoggerProvider : ILoggerProvider
-    {
-        private ITestOutputHelper _testOutputHelper;
-
-        public UnitTestLoggerProvider(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
-        public void Dispose()
-        {
-            _testOutputHelper = null;
-        }
-
-        public ILogger CreateLogger(string categoryName)
-        {
-            return new UnitTestLogger(_testOutputHelper);
-        }
-    }
     
-    public class UnitTestLogger : ILogger, IDisposable
-    {
-        private ITestOutputHelper _testOutputHelper;
-
-        public UnitTestLogger(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-            var s = formatter(state,exception);
-            _testOutputHelper.WriteLine(s);
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return true;
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return new UnitTestLogger(_testOutputHelper);
-        }
-
-        public void Dispose()
-        {
-            _testOutputHelper = null;
-        }
-    }
 }

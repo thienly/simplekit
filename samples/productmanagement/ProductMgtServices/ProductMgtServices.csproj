@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\MapperProfiles" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\SimpleKit.Domain\SimpleKit.Domain.csproj" />
+      <ProjectReference Include="..\ProductMgt.ApplicationService\ProductMgt.ApplicationService.csproj" />
+      <ProjectReference Include="..\ProductMgt.Infrastructure\ProductMgt.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="9.0.0" />
+      <PackageReference Include="MediatR" Version="7.0.0" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+      <PackageReference Include="OpenTelemetry.Collector.AspNetCore" Version="0.2.0-alpha.100" />
+      <PackageReference Include="OpenTelemetry.Collector.Dependencies" Version="0.2.0-alpha.100" />
+      <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="0.2.0-alpha.100" />
+      <PackageReference Include="OpenTelemetry.Hosting" Version="0.2.0-alpha.100" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+    </ItemGroup>
+
+</Project>

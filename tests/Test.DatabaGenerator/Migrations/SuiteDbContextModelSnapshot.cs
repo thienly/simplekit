@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Test.DatabaseGenerator.DbContext;
+using Test.SimpleKit.Repository.EfCore.Base.SeedDb;
 
 
 namespace Test.DatabaGenerator.Migrations

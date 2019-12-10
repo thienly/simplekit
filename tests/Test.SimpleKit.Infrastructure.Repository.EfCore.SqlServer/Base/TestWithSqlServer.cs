@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
 using AutoFixture;
-using Castle.Windsor;
 using Microsoft.EntityFrameworkCore;
-using Test.DatabaseGenerator.DbContext;
 using Test.SimpleKit.Base;
-using Test.SimpleKit.Domain.SeedDb;
+using Test.SimpleKit.Repository.EfCore.Base.SeedDb;
 using Xunit.Abstractions;
 
 namespace Test.SimpleKit.Repository.EfCore.Base

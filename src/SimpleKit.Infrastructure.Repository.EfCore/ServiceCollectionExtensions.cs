@@ -20,16 +20,5 @@ namespace SimpleKit.Infrastructure.Repository.EfCore
             collection.AddScoped(typeof(IQueryRepository<>), typeof(EfQueryRepository<>));
             return collection;
         }
-
-        private static IServiceCollection RegisterAllTypes(this IServiceCollection serviceCollection, Type serviceType,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Transient, params Assembly[] scanAssemblies)
-        {
-            var typeInfos = scanAssemblies.SelectMany(x=>x.DefinedTypes).Where(t => serviceType.IsAssignableFrom(t));
-            foreach (var typeInfo in typeInfos)
-            {
-                serviceCollection.Add(new ServiceDescriptor(serviceType, typeInfo, serviceLifetime));
-            }
-            return serviceCollection;
-        }
     }
 }

@@ -24,14 +24,14 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         
         public virtual Task<TEntity> AddAsync(TEntity entity)
         {
-            var entityEntry = _dbContext.Entry(entity);
-            entityEntry.State = EntityState.Added;
+            var entityEntry = _dbSet.Add(entity);
             _dbContext.SaveChanges();
             return Task.FromResult(entityEntry.Entity);
         }
 
         public virtual Task<TEntity> UpdateAsync(TEntity entity)
         {
+            // We just modified the AR and rest will be handle via domain events
             var entityEntry = _dbContext.Entry(entity);
             entityEntry.State = EntityState.Modified;
             return Task.FromResult(entity);
@@ -39,6 +39,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
 
         public virtual Task DeleteAsync(TEntity entity)
         {
+            //Consider again whether we should use Remove or set entity
             var entityEntry = _dbContext.Entry(entity);
             entityEntry.State = EntityState.Deleted;
             return Task.FromResult(entity);

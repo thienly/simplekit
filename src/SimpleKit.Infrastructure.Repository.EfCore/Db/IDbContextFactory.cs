@@ -1,8 +1,6 @@
 using System;
-using System.Threading.Tasks;
-using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
-namespace SimpleKit.Infrastructure.Repository.EfCore
+namespace SimpleKit.Infrastructure.Repository.EfCore.Db
 {
     public interface IDbContextFactory
     {

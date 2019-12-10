@@ -11,7 +11,12 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb
     {
         public static IServiceCollection AddMongoDb(this IServiceCollection serviceCollection, MongoDbOptions options)
         {
-            serviceCollection.AddScoped<IMongoDbContext>(provider => new MongoDbContext(options.ConnectionString));
+            serviceCollection.AddScoped<IMongoDbContext>(provider =>
+            {
+                if (string.IsNullOrEmpty(options.DatabaseName))
+                    return new MongoDbContext(options.ConnectionString);
+                return new MongoDbContext(options.ConnectionString,options.DatabaseName);
+            });
             serviceCollection.AddScoped<MongoDbReader, MongoDbReader>();
             serviceCollection.AddScoped<MongoDbCreator, MongoDbCreator>();
             serviceCollection.AddScoped<MongoDbUpdater, MongoDbUpdater>();

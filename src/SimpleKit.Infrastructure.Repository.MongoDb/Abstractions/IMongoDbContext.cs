@@ -10,5 +10,6 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Abstractions
         IMongoDatabase Database { get; }
         Task DropCollection<TDocument>() where TDocument : IAggregateRoot;
         IMongoCollection<TDocument> GetCollection<TDocument>() where TDocument: IAggregateRoot;
+        string GetCollectionName<TEntity>();
     }
 }

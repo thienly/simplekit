@@ -5,10 +5,9 @@ using MongoDB.Driver;
 using SimpleKit.Domain.Repositories;
 using SimpleKit.Infrastructure.Repository.MongoDb;
 using SimpleKit.Infrastructure.Repository.MongoDb.Abstractions;
-using SimpleKit.Infrastructure.Repository.MongoDb.Implementations;
 using SimpleKit.Infrastructure.Repository.MongoDb.Repositories;
-using Test.SimpleKit.Domain.SeedDb;
 using Test.SimpleKit.Infrastructure.Repository.MongoDb.Models;
+using Test.SimpleKit.Infrastructure.Repository.MongoDb.SeedDb;
 using Xunit;
 
 namespace Test.SimpleKit.Infrastructure.Repository.MongoDb

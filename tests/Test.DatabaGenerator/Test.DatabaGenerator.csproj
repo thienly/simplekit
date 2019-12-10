@@ -10,11 +10,18 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+      <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Bus.RabbitMq\SimpleKit.Infrastructure.Bus.RabbitMq.csproj" />
       <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Repository.EfCore\SimpleKit.Infrastructure.Repository.EfCore.csproj" />
-      <ProjectReference Include="..\Test.SimpleKit.Domain\Test.SimpleKit.Domain.csproj" />
+      <ProjectReference Include="..\Test.SimpleKit.Infrastructure.Repository.EfCore.SqlServer\Test.SimpleKit.Infrastructure.Repository.EfCore.SqlServer.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DbContext" />
     </ItemGroup>
 
 </Project>

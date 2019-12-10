@@ -37,5 +37,9 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
             var keyType = baseT.GetGenericArguments()[0];
             return _repositoryFactory(typeof(MongoRepository<,>).MakeGenericType(typeof(TEntity),keyType)) as IRepository<TEntity>;
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

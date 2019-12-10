@@ -24,7 +24,6 @@
       <ProjectReference Include="..\..\src\SimpleKit.Domain\SimpleKit.Domain.csproj" />
       <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Repository.EfCore.SqlServer\SimpleKit.Infrastructure.Repository.EfCore.SqlServer.csproj" />
       <ProjectReference Include="..\..\src\SimpleKit.Infrastructure.Repository.EfCore\SimpleKit.Infrastructure.Repository.EfCore.csproj" />
-      <ProjectReference Include="..\Test.DatabaGenerator\Test.DatabaGenerator.csproj" />
       <ProjectReference Include="..\Test.SimpleKit.Domain\Test.SimpleKit.Domain.csproj" />
     </ItemGroup>
 
