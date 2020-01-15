@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ProductMgt.Domain.Factories;
 using SimpleKit.Domain.Repositories;
 using SimpleKit.Infrastructure.Repository.EfCore.Extensions;
 
@@ -22,10 +20,9 @@ namespace ProductMgt.ApplicationService.Commands.Product
 
         public async Task<ProductUpdatedCommandResult> Handle(ProductUpdatedCommand request, CancellationToken cancellationToken)
         {
-            var products = await _queryRepository.Find(x => x.Id == request.Id, null);
-            var product = products.FirstOrDefault();
+            var product = await _queryRepository.FirstOrDefault(x => x.Id == request.Id);
             if (product == null)
-                throw new Exception("Can not find product");
+                throw new AppServiceException($"The product with Id: {request.Id} can not be found");
             product.UpdatePrice(request.Price);
             var updateAsync = await _repository.UpdateAsync(product);
             return new ProductUpdatedCommandResult();

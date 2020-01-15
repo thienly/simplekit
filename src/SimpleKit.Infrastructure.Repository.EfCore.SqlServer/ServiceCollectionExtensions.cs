@@ -10,9 +10,19 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
             Type type)
         {
             collection.AddSingleton<IDbContextFactory, DbContextFactory>();
-            collection.AddScoped(provider => provider.GetService<IDbContextFactory>().Create(type));
+            collection.AddScoped<AppDbContext>(provider =>
+            {
+                AppDbContext dbContext = (AppDbContext)provider.GetService<IDbContextFactory>().Create(type);
+                return dbContext;
+
+
+            });
             collection.AddScoped(type,
-                provider => provider.GetService<IDbContextFactory>().Create(type));
+                provider =>
+                {
+                    var dbContext = provider.GetService<IDbContextFactory>().Create(type);
+                    return dbContext;
+                });
             return collection;
         }
         public static IServiceCollection AddEfCoreSqlTemplate(this IServiceCollection collection, Type typeOfDbContext)

@@ -14,12 +14,12 @@ using SimpleKit.Infrastructure.Bus.Kafka.Interfaces;
 
 namespace SimpleKit.Infrastructure.Bus.Kafka
 {
-    public interface IKafkaProducerFactory<TKey,TValue>
+    public interface IKafkaProducerFactory<TKey, TValue>
     {
         IProducer<TKey, TValue> Create();
     }
 
-    public class KafkaProducerFactory<TKey,TValue> : IKafkaProducerFactory<TKey,TValue>
+    public class KafkaProducerFactory<TKey, TValue> : IKafkaProducerFactory<TKey, TValue>
     {
         private KafkaOptions _kafkaOptions;
         public ILogger<KafkaProducerFactory<TKey, TValue>> Logger { get; set; }
@@ -37,35 +37,26 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
         {
             var config = new ProducerConfig()
             {
-                Acks = Acks.All,
+                MessageTimeoutMs = 500,
                 EnableIdempotence = true,
                 BootstrapServers = _kafkaOptions.KafkaHost
             };
-            IProducer<TKey, TValue> producer = null;
-            if (_cachedItems.TryGetValue(_kafkaOptions.KafkaHost, out producer))
-            {
-                return producer;
-            }
-            else
-            {
-                producer = new ProducerBuilder<TKey, TValue>(config)
-                    .SetErrorHandler((_producers, error) =>
-                    {
-                        Logger.LogError(
-                            $"There is an error when publising message to kafka with reason {error.Reason}");
-                        if (error.IsFatal)
-                        {
-                            _cachedItems.TryRemove(_kafkaOptions.KafkaHost, out producer);
-                        }})
-                    .SetLogHandler((_,log)=> Logger.LogInformation($"Publishing information {log.Message}"))
-                    .SetStatisticsHandler((_, sta) => Logger.LogInformation($"Statistics information {sta}"))
-                    .Build();
-                _cachedItems.TryAdd(_kafkaOptions.KafkaHost, producer);
-            }
+
+            var producer = new ProducerBuilder<TKey, TValue>(config)
+                .SetErrorHandler((_producers, error) =>
+                {
+                    Logger.LogError(
+                        $"There is an error when publising message to kafka with reason {error.Reason}");
+                })
+                .SetLogHandler((_, log) => Logger.LogInformation($"Publishing information {log.Message}"))
+                .SetStatisticsHandler((_, sta) => Logger.LogInformation($"Statistics information {sta}"))
+                .Build();
+
 
             return producer;
         }
     }
+
     public class KafkaBus : IKafkaBus
     {
         private KafkaOptions _options;
@@ -85,7 +76,7 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
 
         public IReadOnlyList<string> GetTopicsForConsuming(params Assembly[] scannedAssemblies)
         {
-            var lst = _subscriptionManager.Subscriptions.Where(x=> !x.IsDynamic).Select(x=>x.EventName).ToList();
+            var lst = _subscriptionManager.Subscriptions.Where(x => !x.IsDynamic).Select(x => x.EventName).ToList();
             var staticTopics = lst.Select(Type.GetType)
                 .SelectMany(x => x.GetCustomAttributes<KafkaTopicAttribute>().SelectMany(t => t.TopicName)).Distinct()
                 .ToList();
@@ -93,6 +84,7 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
                 .Distinct().ToList();
             return staticTopics.Concat(dynamicTopic).ToList();
         }
+
         public void Consume()
         {
             try
@@ -196,6 +188,7 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
 
             return listTopic;
         }
+
         /// <summary>
         /// Use this method to publish a record to kafka with default topic(in kafka options). In case want to publish to multiple topic, the class must have
         /// KafkaTopicAttribute <code> [KafkaTopicAttribute("employee","role")]</code>
@@ -213,13 +206,14 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
                     EnableIdempotence = true
                 };
                 using (var producer = new ProducerBuilder<Null, string>(config)
-                        .SetStatisticsHandler((_, stas) => Logger.LogInformation($"The statistic of kafka producer{stas}"))
-                        .SetLogHandler((_, message) =>
-                            Logger.LogInformation($"Producer log handler level {message.Level.ToString()} with message {message.Message}"))
-                        .Build())
+                    .SetStatisticsHandler((_, stas) => Logger.LogInformation($"The statistic of kafka producer{stas}"))
+                    .SetLogHandler((_, message) =>
+                        Logger.LogInformation(
+                            $"Producer log handler level {message.Level.ToString()} with message {message.Message}"))
+                    .Build())
                 {
                     var listTopic = GetTopicsFromType(typeof(T));
-                    Logger.LogInformation($"Start publishing message to topic: {string.Join(",",listTopic)}");
+                    Logger.LogInformation($"Start publishing message to topic: {string.Join(",", listTopic)}");
                     foreach (var topic in listTopic)
                     {
                         await producer.ProduceAsync(topic, new Message<Null, string>()
@@ -233,14 +227,13 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
                                 Logger.LogInformation(
                                     $"Publishing message successfully to topic {topic}, partition {t1.Result.Partition.Value} and offset {t1.Result.Offset.Value}");
                             }
-                            else 
+                            else
                             {
                                 Logger.LogError(
                                     $"Publishing message unsuccessfully to topic {topic}");
                             }
                         });
                     }
-                    
                 }
             }
             catch (ProduceException<Null, string> e)

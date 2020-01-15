@@ -11,6 +11,7 @@ namespace SimpleKit.Infrastructure.Bus.Kafka
     {
         public static IServiceCollection AddKafkaBus(this IServiceCollection serviceCollection, KafkaOptions options,ILoggerFactory loggerFactory, params Assembly[] eventHandlersAssemblies)
         {
+            serviceCollection.AddSingleton(typeof(IKafkaProducerFactory<,>), typeof(KafkaProducerFactory<,>));
             serviceCollection.AddTransient<KafkaOptions>(provider => options);
             serviceCollection.AddSingleton<ISubscriptionManager, SubscriptionManager>();
             serviceCollection.AddSingleton<IKafkaBus>(provider =>

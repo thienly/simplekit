@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\SimpleKit.Infrastructure.Repository.EfCore.SqlServer\SimpleKit.Infrastructure.Repository.EfCore.SqlServer.csproj" />
+      <ProjectReference Include="..\..\..\src\SimpleKit.StateMachine\SimpleKit.StateMachine.csproj" />
+      <ProjectReference Include="..\Order.Shared\Order.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />
+    </ItemGroup>
+
+</Project>

@@ -15,9 +15,4 @@ namespace ProductMgtServices.Dtos
         public int PageIndex { get; set; }
         public int RecordsPerPage { set; get; }
     }
-
-    public class ProductQueryParameter : PaginatedQueryParameter
-    {
-        
-    }
 }

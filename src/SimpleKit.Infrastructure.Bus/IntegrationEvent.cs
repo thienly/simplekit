@@ -4,8 +4,6 @@ using SimpleKit.Domain.Events;
 
 namespace SimpleKit.Infrastructure.Bus
 {
-    
-
     public interface IIntegrationEventHandler<T>
     {
         Task Handle(T data);

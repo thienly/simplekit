@@ -7,7 +7,6 @@ namespace SimpleKit.Domain.Entities
     {
         void AddEvent(IDomainEvent @domainEvent);
         void ClearDomainEvents();
-        void ApplyEvent(IDomainEvent @domainEvent);
         IReadOnlyCollection<IDomainEvent> GetUncommittedEvents();
         byte[] Version { get; set; }
     }

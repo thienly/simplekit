@@ -5,6 +5,7 @@ using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Events;
 using SimpleKit.Infrastructure.Repository.EfCore.Db;
 using Test.SimpleKit.Base;
 using Test.SimpleKit.Infrastructure.Repository.EfCore.MySQL.Base.SeedDb;
@@ -70,6 +71,8 @@ namespace Test.SimpleKit.Infrastructure.Repository.EfCore.MySQL.Base
             modelBuilder.ApplyConfiguration(new BankAccountEntityTypeConfiguration());
             base.OnModelCreating(modelBuilder);
         }
+
+        public override IDomainEventDispatcher DomainEventDispatcher { get; set; }
 
         public override void PreProcessSaveChanges()
         {

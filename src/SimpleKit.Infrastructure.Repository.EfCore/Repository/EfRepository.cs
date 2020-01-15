@@ -24,8 +24,8 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         
         public virtual Task<TEntity> AddAsync(TEntity entity)
         {
+            var code = _dbContext.GetHashCode();
             var entityEntry = _dbSet.Add(entity);
-            _dbContext.SaveChanges();
             return Task.FromResult(entityEntry.Entity);
         }
 
@@ -40,9 +40,9 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         public virtual Task DeleteAsync(TEntity entity)
         {
             //Consider again whether we should use Remove or set entity
-            var entityEntry = _dbContext.Entry(entity);
-            entityEntry.State = EntityState.Deleted;
-            return Task.FromResult(entity);
+            // Remove method will help doing the deletion strategy such as set null ...
+            _dbContext.Remove(entity);
+            return Task.CompletedTask;
         }
     }
 }

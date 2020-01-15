@@ -18,7 +18,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions
     public static class RepositoryExtensions
     {
         public static Task<List<TEntity>> Find<TEntity>(this IQueryRepository<TEntity> repository,
-            Expression<Func<TEntity, bool>> filter, List<Expression<Func<TEntity, object>>> includes)
+            Expression<Func<TEntity, bool>> filter, List<Expression<Func<TEntity, object>>> includes = null)
         where TEntity: class, IAggregateRoot
         {
             var queryable = repository.Queryable().AsNoTracking();
@@ -30,6 +30,21 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions
                 return Task.FromResult(aggregateRoots);
             }
             var roots = queryable.Where(filter).ToList();
+            return Task.FromResult(roots);
+        }
+        public static Task<TEntity> FirstOrDefault<TEntity>(this IQueryRepository<TEntity> repository,
+            Expression<Func<TEntity, bool>> filter, List<Expression<Func<TEntity, object>>> includes = null)
+            where TEntity: class, IAggregateRoot
+        {
+            var queryable = repository.Queryable().AsNoTracking();
+            if (includes != null)
+            {
+                var includableQueryable =
+                    includes.Aggregate(queryable, ((current, include) => current.Include(include)));
+                var aggregateRoots = includableQueryable.FirstOrDefault(filter);
+                return Task.FromResult(aggregateRoots);
+            }
+            var roots = queryable.FirstOrDefault(filter);
             return Task.FromResult(roots);
         }
         public static Task<PaginatedItem<TEntity>> Paging<TEntity>(this IQueryRepository<TEntity> repository,
@@ -53,5 +68,6 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Extensions
             return Task.FromResult(new PaginatedItem<TEntity>(totalItems, pageIndex,
                 numberOfItemsPerPage, entities));
         }
+        
     }
 }

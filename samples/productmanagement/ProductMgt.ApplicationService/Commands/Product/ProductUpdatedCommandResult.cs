@@ -1,7 +1,6 @@
 namespace ProductMgt.ApplicationService.Commands.Product
 {
-    public class ProductUpdatedCommandResult
+    public class ProductUpdatedCommandResult : BaseCommandResult
     {
-        
     }
 }

@@ -11,13 +11,15 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
         private readonly IBaseMongoRepositoryAdd _repositoryAdd;
         private readonly IBaseMongoRepositoryUpdate _repositoryUpdate;
         private readonly IBaseMongoRepositoryDelete _repositoryDelete;
+        private IDomainEventDispatcher _domainEventDispatcher;
 
         public MongoRepository(IBaseMongoRepositoryAdd repositoryAdd, IBaseMongoRepositoryUpdate repositoryUpdate,
-            IBaseMongoRepositoryDelete repositoryDelete)
+            IBaseMongoRepositoryDelete repositoryDelete, IDomainEventDispatcher domainEventDispatcher)
         {
             _repositoryAdd = repositoryAdd;
             _repositoryUpdate = repositoryUpdate;
             _repositoryDelete = repositoryDelete;
+            _domainEventDispatcher = domainEventDispatcher;
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)
@@ -45,7 +47,7 @@ namespace SimpleKit.Infrastructure.Repository.MongoDb.Repositories
             var readOnlyCollection = entity.GetUncommittedEvents();
             foreach (var @event in readOnlyCollection)
             {
-                DomainEvents.Raise(@event);
+                _domainEventDispatcher.Dispatch(@event);
             }
             entity.ClearDomainEvents();
         }

@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SimpleKit.Domain;
+using SimpleKit.Domain.Events;
 using SimpleKit.Infrastructure.Repository.EfCore.Db;
 
 namespace Test.SimpleKit.Repository.EfCore.Base.SeedDb
@@ -64,6 +65,8 @@ namespace Test.SimpleKit.Repository.EfCore.Base.SeedDb
             modelBuilder.ApplyConfiguration(new BankAccountEntityTypeConfiguration());
             base.OnModelCreating(modelBuilder);
         }
+
+        public override IDomainEventDispatcher DomainEventDispatcher { get; set; }
 
         public override void PreProcessSaveChanges()
         {

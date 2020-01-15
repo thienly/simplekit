@@ -31,11 +31,6 @@ namespace SimpleKit.Domain.Entities
         {
             _uncommitedDomainEvents.Clear();
         }
-        public void ApplyEvent(IDomainEvent @domainEvent)
-        {            
-            DomainEvents.Raise(domainEvent);
-        }
-
         public IReadOnlyCollection<IDomainEvent> GetUncommittedEvents()
         {
             return _uncommitedDomainEvents.ToList();

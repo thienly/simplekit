@@ -9,4 +9,6 @@ namespace ProductMgt.Domain.Events
         public string OldName { get; set; }
         public string NewName { get; set; }
     }
+
+    
 }

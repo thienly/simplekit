@@ -1,25 +1,24 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using MediatR;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.OpenApi.Models;
-using OpenTelemetry.Resources;
 using OpenTelemetry.Trace.Configuration;
 using OpenTelemetry.Trace.Sampler;
 using ProductMgt.ApplicationService;
+using ProductMgt.DomainEventHandlers;
 using ProductMgt.Infrastructure;
+using ProductMgt.Shared.MediaApi;
 using ProductMgtServices.Middlewares;
+using ProductMgtServices.Profiles;
+using SimpleKit.Infrastructure.Bus.Kafka;
 using SimpleKit.Infrastructure.Repository.EfCore.SqlServer;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace ProductMgtServices
 {
@@ -36,18 +35,31 @@ namespace ProductMgtServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
-            services.AddApplicationService()
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<ProductProfile>();
+            },Assembly.GetExecutingAssembly());
+            services.Configure<FileSystemOptions>(Configuration.GetSection("FileSystemOptions"));
+            services.AddSingleton<IFileSystemUtilities, FileSystemUtilities>();
+            services
+                .AddDomainEventHandler()
+                .AddApplicationService()
                 .AddInfrastructure(new EfCoreSqlServerOptions()
                 {
                     MainDbConnectionString = "Server=10.0.19.103;Database=ProductMgt;User Id=sa;Password=Test!234"
-                }).AddDomainFactory();
+                })
+                .AddKafkaBus(new KafkaOptions()
+                {
+                    KafkaHost = "10.0.19.103:9092"
+                }, new NullLoggerFactory())
+                .AddDomainFactory();
+                
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo()
                 {
-                    Title = "Product Service Management",
-                    Version = "v1"
+                    Version = "v1",
+                    Title = "Product management"
                 });
             });
             services.AddOpenTelemetry(builder =>
@@ -74,21 +86,22 @@ namespace ProductMgtServices
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseMiddleware<LogHandlerMiddleware>();
             app.UseSwagger();
+            
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Service Management");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             });
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers(); 
             });
+            
         }
     }
 }

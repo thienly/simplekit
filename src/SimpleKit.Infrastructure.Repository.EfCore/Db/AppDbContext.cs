@@ -1,7 +1,7 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using SimpleKit.Domain.Entities;
 using SimpleKit.Domain.Events;
@@ -14,27 +14,29 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
 
         public AppDbContext()
         {
-            
         }
+
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
 
+        public abstract IDomainEventDispatcher DomainEventDispatcher { get; set; }
         public abstract void PreProcessSaveChanges();
+
         private void PublishUncommitedDomainEvents()
         {
-            foreach (var entityEntry in base.ChangeTracker.Entries())
+            var domainEvents = base.ChangeTracker.Entries().Where(x => x.Entity is IAggregateRoot)
+                .SelectMany(x => ((IAggregateRoot) x.Entity).GetUncommittedEvents()).ToList();
+
+            foreach (var @event in domainEvents)
             {
-                if (entityEntry.Entity is IAggregateRoot)
+                if (@event is IDomainEvent)
                 {
-                    var root = entityEntry.Entity as IAggregateRoot;
-                    foreach (var @event in root.GetUncommittedEvents())
-                    {
-                        DomainEvents.Raise(@event);
-                    }
+                    DomainEventDispatcher.Dispatch(@event);
                 }
             }
         }
+
         public override int SaveChanges()
         {
             PublishUncommitedDomainEvents();
@@ -44,7 +46,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
             return affectedRows;
         }
 
-        private void ProcessAfterSaveChanges()
+        public virtual void ProcessAfterSaveChanges()
         {
             foreach (var entityEntry in this.ChangeTracker.Entries())
             {
@@ -52,17 +54,18 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Db
             }
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             PublishUncommitedDomainEvents();
-            var affectedRows = base.SaveChangesAsync(cancellationToken);
+            var affectedRows = await base.SaveChangesAsync(cancellationToken);
             ProcessAfterSaveChanges();
             return affectedRows;
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = new CancellationToken())
         {
-            var affectedRows=  base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            var affectedRows = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
             ProcessAfterSaveChanges();
             return affectedRows;
         }

@@ -36,11 +36,11 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
                 : _loggerFactory.CreateLogger<EfUnitOfWork>();
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var result = _dbContext.SaveChangesAsync(cancellationToken);
+                var result = await _dbContext.SaveChangesAsync(cancellationToken);
                 _transaction.Commit();
                 return result;
             }

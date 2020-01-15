@@ -9,27 +9,27 @@ namespace ProductMgt.DatabaseCreator
     {
         static void Main(string[] args)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<ProductMgtDbContext>(builder =>
-                builder.UseSqlServer("Server=10.0.19.103;Database=ProductMgt;User Id=sa;Password=Test!234",
-                    optionsBuilder => { optionsBuilder.MigrationsAssembly("ProductMgt.Migrations"); }
-                ));
-            var buildServiceProvider = serviceCollection.BuildServiceProvider();
-            
-            using (var scope = buildServiceProvider.CreateScope())
-            {
-                try
-                {
-                    var productMgtDbContext = buildServiceProvider.GetService<ProductMgtDbContext>();
-                    productMgtDbContext.Database.Migrate();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-                
-            }
+//            var serviceCollection = new ServiceCollection();
+//            serviceCollection.AddDbContext<ProductMgtDbContext>(builder =>
+//                builder.UseSqlServer("Server=10.0.19.103;Database=ProductMgt;User Id=sa;Password=Test!234",
+//                    optionsBuilder => { optionsBuilder.MigrationsAssembly("ProductMgt.Infrastructure"); }
+//                ));
+//            var buildServiceProvider = serviceCollection.BuildServiceProvider();
+//            
+//            using (var scope = buildServiceProvider.CreateScope())
+//            {
+//                try
+//                {
+//                    var productMgtDbContext = buildServiceProvider.GetService<ProductMgtDbContext>();
+//                    productMgtDbContext.Database.Migrate();
+//                }
+//                catch (Exception e)
+//                {
+//                    Console.WriteLine(e);
+//                    throw;
+//                }
+//                
+//            }
         }
     }
 }

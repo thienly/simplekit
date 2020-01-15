@@ -6,7 +6,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\src\SimpleKit.Domain\SimpleKit.Domain.csproj" />
+      <ProjectReference Include="..\..\..\src\SimpleKit.Infrastructure.Bus.Kafka\SimpleKit.Infrastructure.Bus.Kafka.csproj" />
+      <ProjectReference Include="..\..\..\src\SimpleKit.Infrastructure.Bus\SimpleKit.Infrastructure.Bus.csproj" />
       <ProjectReference Include="..\ProductMgt.Domain\ProductMgt.Domain.csproj" />
+      <ProjectReference Include="..\ProductMgt.Infrastructure\ProductMgt.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
 
 </Project>
