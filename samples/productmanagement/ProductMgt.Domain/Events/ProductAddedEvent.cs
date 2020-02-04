@@ -6,6 +6,6 @@ namespace ProductMgt.Domain.Events
     public class ProductAddedEvent : IDomainEvent
     {
         public Guid EventId { get; set; } = Guid.NewGuid();
-        public long ProductId { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

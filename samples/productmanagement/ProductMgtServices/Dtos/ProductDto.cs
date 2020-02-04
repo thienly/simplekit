@@ -1,8 +1,10 @@
+using System;
+
 namespace ProductMgtServices.Dtos
 {
     public class ProductResponseItem
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
     }
@@ -18,12 +20,12 @@ namespace ProductMgtServices.Dtos
 
     public class ProductUpdatedDto
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public decimal Price { get; set; }
     }
 
     public class ProductDeletedDto
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

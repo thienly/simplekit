@@ -5,7 +5,7 @@ using SimpleKit.Domain.Entities;
 
 namespace ProductMgt.Domain
 {
-    public class Product : AggregateRootWithId<long>
+    public class Product : AggregateRootBase
     {
         private string _name;
         private decimal _price;

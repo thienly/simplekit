@@ -18,7 +18,6 @@ using ProductMgtServices.Middlewares;
 using ProductMgtServices.Profiles;
 using SimpleKit.Infrastructure.Bus.Kafka;
 using SimpleKit.Infrastructure.Repository.EfCore.SqlServer;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace ProductMgtServices
 {
@@ -91,7 +90,7 @@ namespace ProductMgtServices
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             });
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
             
@@ -99,7 +98,7 @@ namespace ProductMgtServices
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); 
+                endpoints.MapControllers();
             });
             
         }

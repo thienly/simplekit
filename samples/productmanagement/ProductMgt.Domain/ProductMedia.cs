@@ -1,3 +1,4 @@
+using System;
 using SimpleKit.Domain.Entities;
 
 namespace ProductMgt.Domain
@@ -8,14 +9,14 @@ namespace ProductMgt.Domain
         {
             
         }
-        public ProductMedia(long productId, ProductMediaType productMediaType, string relativePath)
+        public ProductMedia(Guid productId, ProductMediaType productMediaType, string relativePath)
         {
             ProductId = productId;
             MediaType = productMediaType;
             RelativePath = relativePath;
         }
 
-        public long ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public ProductMediaType MediaType { get; set; }
         public string RelativePath { get; set; }
     }

@@ -10,7 +10,6 @@ namespace ProductMgt.Infrastructure
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).UseHiLo("ProductSequenceHilo");
             builder.Property(x => x.Name).HasField("_name");
             builder.Property(x => x.Price).HasField("_price");
             builder.Property(x => x.ExpiredDate).HasField("_expiredDate");
