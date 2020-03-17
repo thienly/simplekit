@@ -1,0 +1,81 @@
+syntax="proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "CarServices";
+
+message UUID {
+   string value = 1;
+}
+
+message GetCarRequest {
+    UUID Id = 1;
+}
+message BigDecimal {
+  string value = 1; // feel free to substitute for a variant of precision/scale/unscaled
+}
+message GetCarReply {
+   UUID Id = 1;
+   string Name = 2;
+   string CarType = 3;
+   BigDecimal Price = 4;
+   repeated CarReservation CarReservations = 5;
+}
+
+message CarReservation {
+   UUID Id = 1;
+   google.protobuf.Timestamp StartDate = 2;
+   google.protobuf.Timestamp EndDate = 3;   
+}
+
+message CarMessage {
+   UUID Id =1; 
+   string Name = 2;
+   string CarType = 3;
+   BigDecimal Price = 4;
+}
+message AddCarRequest {
+   string Name = 2;
+   string CarType = 3;
+   BigDecimal Price = 4;
+}
+message AddCarReply {
+   UUID Id =1;
+   string Name = 2; 
+}
+
+message BookCarRequest {
+  UUID Id =1;
+  google.protobuf.Timestamp StartDate = 2;
+  google.protobuf.Timestamp EndDate = 3;  
+}
+
+message BookCarReply {
+   UUID CarBookingId = 1;
+   bool IsSuccess =2;
+   string Reason = 3;
+}
+
+message CancelCarBookingRequest {
+   UUID CarBookingId = 1;
+   
+}
+message CancelCarBookingReply {
+    bool IsSuccess = 1;
+    string Reason = 2;   
+}
+message ListOfCarRequest {
+
+}
+
+message ListOfCarReply {
+   repeated CarMessage Cars = 1;    
+}
+
+service CarSvc {
+    rpc ListOfCar(ListOfCarRequest) returns (ListOfCarReply);
+    rpc GetCar(GetCarRequest) returns (GetCarReply);
+    rpc AddCar(AddCarRequest) returns (AddCarReply);
+    rpc BookCar(BookCarRequest) returns (BookCarReply);
+    rpc CancelBooking(CancelCarBookingRequest) returns (CancelCarBookingReply);
+    
+}

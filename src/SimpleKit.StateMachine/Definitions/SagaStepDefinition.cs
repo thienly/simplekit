@@ -9,10 +9,9 @@ namespace SimpleKit.StateMachine.Definitions
     public abstract class SagaStepDefinition
     {
         public string Name { get; protected  set; }
-
-        public Func<ISagaCommand,SagaCommandEndpoint> ParticipantHandler { get; protected set; } = command => new NoReplyCommandEndpoint();
+        public Func<ISagaCommand,ISagaState,SagaCommandEndpoint> ParticipantHandler { get; protected set; } = (command,state) => new NoReplyCommandEndpoint();
         public Func<ISagaCommand>  ParticipantStage { get; protected  set; } = () => new EmptySagaCommand();
-        public Func<ISagaCommand,SagaCommandEndpoint> CompensationHandler { get; protected set; } = command => new NoReplyCommandEndpoint();
+        public Func<ISagaCommand,ISagaState,SagaCommandEndpoint> CompensationHandler { get; protected set; } = (command,state) => new NoReplyCommandEndpoint();
         public Func<ISagaCommand> CompensationStage { get; protected  set; } = () => new EmptySagaCommand();
         public Func<ISagaReplyCommand> ReplyHandler { get; protected  set; }
         public Action<ISagaReplyCommand> ReplyStage { get; protected  set; }
@@ -62,7 +61,7 @@ namespace SimpleKit.StateMachine.Definitions
             return current;
         }
 
-        ISagaStepDefinition ISagaStepAndCompensation.AssignCompensation(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
+        ISagaStepDefinition ISagaStepAndCompensation.AssignCompensation(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
         {
             return AssignCompensation(handler,generatedStage);
         }
@@ -73,19 +72,19 @@ namespace SimpleKit.StateMachine.Definitions
         }
 
 
-        public ISagaReplyAndCompensation AssignParticipant(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
+        public ISagaReplyAndCompensation AssignParticipant(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
         {
             this.ParticipantHandler = handler;
             this.ParticipantStage = generatedStage;
             return this;
         }
 
-        ISagaStepDefinition ISagaParticipant.AssignCompensation(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
+        ISagaStepDefinition ISagaParticipant.AssignCompensation(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
         {
             return AssignCompensation(handler, generatedStage);
         }
 
-        public ISagaStepAndReply AssignCompensation(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
+        public ISagaStepAndReply AssignCompensation(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedStage)
         {
             this.CompensationHandler = handler;
             this.CompensationStage = generatedStage;

@@ -5,9 +5,10 @@ namespace SimpleKit.StateMachine
 {
     public class SagaStateProxy
     {
-        public Guid SagaId { get; private set; }
+        public Guid Id { get; set; }
+        public Guid SagaId { get;  set; }
 
-        internal SagaStateProxy()
+        public SagaStateProxy()
         {
             
         }
@@ -87,6 +88,7 @@ namespace SimpleKit.StateMachine
             };
         }
 
+        public SagaException Error { get; set; }
         public SagaDirection Direction { get; private set; } = SagaDirection.Forward;
 
         public void MoveForward()

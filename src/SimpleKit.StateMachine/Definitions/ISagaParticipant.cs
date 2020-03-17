@@ -4,7 +4,7 @@ namespace SimpleKit.StateMachine.Definitions
 {
     public interface ISagaParticipant
     {
-        ISagaReplyAndCompensation AssignParticipant(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedState);
-        ISagaStepDefinition AssignCompensation(Func<ISagaCommand,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedState);
+        ISagaReplyAndCompensation AssignParticipant(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedState);
+        ISagaStepDefinition AssignCompensation(Func<ISagaCommand,ISagaState,SagaCommandEndpoint> handler, Func<ISagaCommand> generatedState);
     }
 }

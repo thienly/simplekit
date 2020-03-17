@@ -1,0 +1,17 @@
+syntax="proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "ProductServices";
+
+
+message ProductData {
+    int32 Id = 1;
+    string Name = 2;
+    float Price = 3;
+}
+message ProdutRequest {
+    int32 Id =1;
+}
+service ProductSvc {
+    rpc GetProduct(ProductData) returns (ProductData);
+}

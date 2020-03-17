@@ -24,6 +24,7 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.Repository
         
         public virtual Task<TEntity> AddAsync(TEntity entity)
         {
+            // We need to assign identity before saving to database.
             var entityEntry = _dbSet.Add(entity);
             return Task.FromResult(entityEntry.Entity);
         }

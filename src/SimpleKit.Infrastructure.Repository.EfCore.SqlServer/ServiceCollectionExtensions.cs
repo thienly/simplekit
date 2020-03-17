@@ -6,28 +6,29 @@ namespace SimpleKit.Infrastructure.Repository.EfCore.SqlServer
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSimpleKitEfCoreSql(this IServiceCollection collection,
-            Type type)
+        public static IServiceCollection AddSimpleKitEfCoreSql<T>(this IServiceCollection collection)
         {
             collection.AddSingleton<IDbContextFactory, DbContextFactory>();
             collection.AddScoped<AppDbContext>(provider =>
             {
-                AppDbContext dbContext = (AppDbContext)provider.GetService<IDbContextFactory>().Create(type);
+                AppDbContext dbContext = (AppDbContext)provider.GetService<IDbContextFactory>().Create(typeof(T));
                 return dbContext;
 
 
             });
-            collection.AddScoped(type,
+            collection.AddScoped(typeof(T),
                 provider =>
                 {
-                    var dbContext = provider.GetService<IDbContextFactory>().Create(type);
+                    var dbContext = provider.GetService<IDbContextFactory>().Create(typeof(T));
                     return dbContext;
                 });
             return collection;
         }
-        public static IServiceCollection AddEfCoreSqlTemplate(this IServiceCollection collection, Type typeOfDbContext)
+        public static IServiceCollection AddEfCoreSqlTemplate<T>(this IServiceCollection collection) where T: AppDbContext
         {
-            return collection.AddSimpleKitEfCore().AddSimpleKitEfCoreSql(typeOfDbContext);
+            return collection.AddDomainEventHandler()
+                .AddSimpleKitEfCore()
+                .AddSimpleKitEfCoreSql<T>();
         }
     }
 }

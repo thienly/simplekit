@@ -1,0 +1,81 @@
+syntax="proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "RoomServices";
+
+message UUID {
+   string value = 1;
+}
+
+message GetRoomRequest {
+    UUID Id = 1;
+}
+message BigDecimal {
+  string value = 1; // feel free to substitute for a variant of precision/scale/unscaled
+}
+message GetRoomReply {
+   UUID Id = 1;
+   string Name = 2;
+   string RoomType = 3;
+   BigDecimal Price = 4;
+   repeated RoomReservation Reservation = 5;
+}
+
+message RoomReservation {
+   UUID Id = 1;
+   google.protobuf.Timestamp StartDate = 2;
+   google.protobuf.Timestamp EndDate = 3;   
+}
+
+message RoomMessage {
+   UUID Id =1; 
+   string Name = 2;
+   string RoomType = 3;
+   BigDecimal Price = 4;
+}
+message AddRoomRequest {
+   string Name = 2;
+   string RoomType = 3;
+   BigDecimal Price = 4;
+}
+message AddRoomReply {
+   UUID Id =1;
+   string Name = 2; 
+}
+
+message BookRoomRequest {
+  UUID Id =1;
+  google.protobuf.Timestamp StartDate = 2;
+  google.protobuf.Timestamp EndDate = 3;  
+}
+
+message BookRoomReply {
+   UUID RoomBookingId = 1;
+   bool IsSuccess =2;
+   string Reason = 3;
+}
+
+message CancelRoomBookingRequest {
+   UUID RoomBookingId = 1;
+   
+}
+message CancelRoomBookingReply {
+    bool IsSuccess = 1;
+    string Reason = 2;   
+}
+message ListOfRoomRequest {
+
+}
+
+message ListOfRoomReply {
+   repeated RoomMessage Rooms = 1;    
+}
+
+service RoomSvc {
+    rpc ListOfRoom(ListOfRoomRequest) returns (ListOfRoomReply);
+    rpc GetRoom(GetRoomRequest) returns (GetRoomReply);
+    rpc AddRoom(AddRoomRequest) returns (AddRoomReply);
+    rpc BookRoom(BookRoomRequest) returns (BookRoomReply);
+    rpc CancelBooking(CancelRoomBookingRequest) returns (CancelRoomBookingReply);
+    
+}

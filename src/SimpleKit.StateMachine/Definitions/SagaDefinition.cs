@@ -82,6 +82,8 @@ namespace SimpleKit.StateMachine.Definitions
 
         public SagaStepDefinition<TSagaState> GetStepWithName(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                return GetFirstStep();
             var definition = GetStepDefinition();
             while (definition != null)
             {
@@ -100,6 +102,22 @@ namespace SimpleKit.StateMachine.Definitions
             if (direction == SagaDirection.Backward)
                 return GetPreviousStep(currentStep) == null;
             return true;
+        }
+
+        public SagaStepDefinition<TSagaState> GetFirstStep()
+        {
+            return GetStepDefinition();
+        }
+
+        public SagaStepDefinition<TSagaState> GetLastStep()
+        {
+            var firstStep = GetStepDefinition();
+            while (firstStep.NextStep != null)
+            {
+                firstStep = firstStep.NextStep;
+            }
+
+            return firstStep;
         }
     }
 

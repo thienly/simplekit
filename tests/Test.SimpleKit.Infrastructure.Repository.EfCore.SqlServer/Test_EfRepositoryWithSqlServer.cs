@@ -39,7 +39,7 @@ namespace Test.SimpleKit.Repository.EfCore
                 {new UnitTestLoggerProvider(_testOutputHelper)}));
             
             serviceCollection.AddSimpleKitEfCore()
-                .AddSimpleKitEfCoreSql(typeof(SuiteDbContext));
+                .AddSimpleKitEfCoreSql<SuiteDbContext>();
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }
 

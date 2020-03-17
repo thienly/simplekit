@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>CarServiceClient</PackageId>
+    <Version>0.0.1</Version>
+    <Company>GitHub</Company>
+    <PackageDescription>This package adds client car carservice</PackageDescription>
+    <RepositoryUrl>https://github.com/thienly/simplekit</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.23.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.23.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="../../protos/carservice/car.proto" GrpcServices="Client" Link="Protos/car.proto" />
+  </ItemGroup>
+</Project>

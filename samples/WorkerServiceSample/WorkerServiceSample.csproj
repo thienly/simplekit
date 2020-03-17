@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>dotnet-WorkerServiceSample-409B761D-C678-49D1-A44B-19DFB00BF5C8</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.11.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
+        <PackageReference Include="System.Text.Json" Version="4.7.1" />
+    </ItemGroup>
+</Project>

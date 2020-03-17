@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SampleConsole
 {
@@ -6,21 +8,27 @@ namespace SampleConsole
     {
         static void Main(string[] args)
         {
-            var p = new Person("Thien",null);
             Console.WriteLine("Person");
         }
-    }
-    #nullable enable
-    public class Person
-    {
-        public Person(string firstName, string lastName)
+        public static async Task<T> WithCancellation<T>(Task<T> task, CancellationToken cancellationToken)
         {
-            FirstName = firstName;
-            LastName = lastName;
+           var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+           using (cancellationToken.Register(state =>
+               {
+                   ((TaskCompletionSource<object>)state).TrySetResult(null);
+               },
+               tcs))
+           {
+               var resultTask = await Task.WhenAny(task, tcs.Task);
+               if (resultTask == tcs.Task)
+               {
+                   // Operation cancelled
+                   throw new OperationCanceledException(cancellationToken);
+               }
+
+               return await task;
+           }
         }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DOB { get; set; }
     }
-    #nullable restore
+    
 }
