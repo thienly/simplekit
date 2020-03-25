@@ -1,11 +1,11 @@
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using CarServices;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MongoDB.Driver;
+using OpenTelemetry.Trace.Configuration;
 using Order.CarService.Domains;
 using Order.CarService.Repositories;
 using SimpleKit.Domain.Repositories;
@@ -18,21 +18,25 @@ namespace Order.CarService.Services
     {
         private IMongoQueryRepository<Car> _queryRepository;
         private IRepository<Car> _repository;
+        private readonly TracerFactory _tracerFactory;
 
-        public CarSvc( IRepository<Car> repository, IMongoQueryRepository<Car> queryRepository)
+
+        public CarSvc(IRepository<Car> repository, IMongoQueryRepository<Car> queryRepository,
+            TracerFactory tracerFactory)
         {
             _repository = repository;
             _queryRepository = queryRepository;
+            _tracerFactory = tracerFactory;
         }
 
         public override async Task<GetCarReply> GetCar(GetCarRequest request, ServerCallContext context)
         {
             var car = await _queryRepository.GetById(request.Id);
             var reservation = new RepeatedField<CarReservation>();
-            reservation.AddRange(car.CarReservations.Select(x=> new CarReservation()
+            reservation.AddRange(car.CarReservations.Select(x => new CarReservation()
             {
                 StartDate = x.StartDate.ToTimestamp(),
-                EndDate =  x.EndDate.ToTimestamp(),
+                EndDate = x.EndDate.ToTimestamp(),
                 Id = x.Id.ToString()
             }));
             var result = new GetCarReply()
@@ -69,7 +73,7 @@ namespace Order.CarService.Services
             var car = await _queryRepository.GetById(request.Id);
             try
             {
-                var carReservation = car.Booking(startDate,endDate);
+                var carReservation = car.Booking(startDate, endDate);
                 await _repository.UpdateAsync(car);
                 return new BookCarReply()
                 {
@@ -77,7 +81,7 @@ namespace Order.CarService.Services
                     IsSuccess = true
                 };
             }
-            catch (DomainException e) 
+            catch (DomainException e)
             {
                 return new BookCarReply()
                 {
@@ -85,9 +89,10 @@ namespace Order.CarService.Services
                     Reason = e.Message
                 };
             }
-            
         }
-        public override async Task<CancelCarBookingReply> CancelBooking(CancelCarBookingRequest request, ServerCallContext context)
+
+        public override async Task<CancelCarBookingReply> CancelBooking(CancelCarBookingRequest request,
+            ServerCallContext context)
         {
             try
             {
@@ -117,7 +122,7 @@ namespace Order.CarService.Services
             {
                 result.Cars.Add(new CarMessage()
                 {
-                    Id =  x.Id.ToString(),
+                    Id = x.Id.ToString(),
                     Name = x.Name,
                     Price = x.Price,
                     CarType = x.CarType.ToString()

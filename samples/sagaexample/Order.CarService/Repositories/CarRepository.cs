@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using OpenTelemetry.Trace.Configuration;
 using Order.CarService.Domains;
 using SimpleKit.Domain.Repositories;
 
@@ -8,10 +9,12 @@ namespace Order.CarService.Repositories
     public class CarRepository : IRepository<Car>
     {
         private readonly IMongoCollection<Car> _mongoCollection;
+        private readonly TracerFactory _tracerFactory;
 
-        public CarRepository(IMongoCollection<Car> mongoCollection)
+        public CarRepository(IMongoCollection<Car> mongoCollection, TracerFactory tracerFactory)
         {
             _mongoCollection = mongoCollection;
+            _tracerFactory = tracerFactory;
         }
         public async Task<Car> AddAsync(Car entity)
         {
