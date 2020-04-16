@@ -20,6 +20,7 @@ namespace Order.HotelService
                     webBuilder.ConfigureKestrel(k =>
                     {
                         k.ListenAnyIP(8082, options => { options.Protocols = HttpProtocols.Http2; });
+                        
                     });
                 });
     }

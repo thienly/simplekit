@@ -1,27 +1,34 @@
+using System;
+using System.Text;
+using Newtonsoft.Json;
 using SimpleKit.StateMachine.Definitions;
 
-namespace OrderWorker.Domains
+namespace OrderWebApi.Domains
 {
+   
+
+  
+
     public class BookingTripDefinition : SagaDefinition<BookingTripState>
     {
         private ISagaStepDefinition _definition;
-        private BookingCommandHandler _bookingCommandHandler;
+        private TripManagementEndpoints _managementEndpoints;
         private BookingTripState _bookingTripState;
 
         public BookingTripDefinition(BookingTripState bookingTripState)
         {
-            _bookingCommandHandler = new BookingCommandHandler();
+            _managementEndpoints = new TripManagementEndpoints();
             _bookingTripState = bookingTripState;
             _definition = this.Step("BeginBooking")
-                .AssignCompensation((cm,state) => _bookingCommandHandler.CancelHotel(cm, (BookingTripState)state),
+                .AssignCompensation((cm,state) => _managementEndpoints.CancelHotel(cm, (BookingTripState)state),
                     _bookingTripState.CancelHotel)
                 .Step("BookingHotel")
-                .AssignParticipant((command,state) => _bookingCommandHandler.BookHotel(command, (BookingTripState)state),
+                .AssignParticipant((command,state) => _managementEndpoints.BookHotel(command, (BookingTripState)state),
                     _bookingTripState.BookHotel)
-                .AssignCompensation((command,state) => _bookingCommandHandler.CancelCar(command, (BookingTripState)state),
+                .AssignCompensation((command,state) => _managementEndpoints.CancelCar(command, (BookingTripState)state),
                     _bookingTripState.CancelCar)
                 .Step("BookCar")
-                .AssignParticipant((command,state) => _bookingCommandHandler.BookCar(command, (BookingTripState)state),
+                .AssignParticipant((command,state) => _managementEndpoints.BookCar(command, (BookingTripState)state),
                     _bookingTripState.BookCar)
                 .Build();
         }

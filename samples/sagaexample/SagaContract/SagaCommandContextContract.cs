@@ -1,21 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 using System.Threading;
+using SimpleKit.StateMachine.Definitions;
 
-namespace SimpleKit.StateMachine.Definitions
+namespace SagaContract
 {
-    public class SagaCommandContext
+    public class SagaCommandContextContract
     {
         private string _destinationAddress;
         private string _faultAddress;
         public Guid MessageId { get; set; } // unique identifier for each message
-        public Guid CorrelationId { get; set; }
-
-        public Guid
-            RequestId { get; set; } // auto assign when starting a request, a respond message will auto attach it
-
+        public Guid CorrelationId { get; set; } 
+        public Guid RequestId { get; set; } // auto assign when starting a request, a respond message will auto attach it
         public string SourceAddress { get; set; } // originated address
 
         public string DestinationAddress
@@ -30,7 +27,7 @@ namespace SimpleKit.StateMachine.Definitions
         {
             get
             {
-                if (_faultAddress != null)
+                if (_faultAddress != null) 
                     return _faultAddress;
                 return "Fault_" + _destinationAddress;
             }
@@ -43,32 +40,26 @@ namespace SimpleKit.StateMachine.Definitions
         public string ReplyMessageType { get; set; }
         public string FaultMessageType { get; set; }
 
-        public Dictionary<string, object> ToDictionary()
+        public  Dictionary<string, object> ToDictionary()
         {
-            var data = new Dictionary<string, object>();
-            var propertyInfos = typeof(SagaCommandContext).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var data = new Dictionary<string,object>();
+            var propertyInfos = typeof(SagaCommandContextContract).GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var propertyInfo in propertyInfos)
             {
-                var value = propertyInfo.GetValue(this);
-                data.Add(propertyInfo.Name, value?.ToString());
+                try
+                {
+                    var value = propertyInfo.GetValue(this,null);
+                    data.Add(propertyInfo.Name,value?.ToString());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                
             }
 
             return data;
         }
-    }
-
-    public abstract class SagaCommandEndpoint
-    {
-        public SagaCommandContext SagaCommandContext { get; set; }
-        public byte[] Data { get; set; }
-    }
-
-
-    public class NoReplyCommandEndpoint : SagaCommandEndpoint
-    {
-    }
-
-    public class WaitingReplyCommandEndpoint : SagaCommandEndpoint
-    {
     }
 }

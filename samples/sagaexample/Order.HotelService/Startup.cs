@@ -1,9 +1,11 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
+using Order.HotelService.Consumers;
 using Order.HotelService.Domains;
 using Order.HotelService.Repositories;
 using Order.HotelService.Services;
@@ -27,6 +29,8 @@ namespace Order.HotelService
             services.AddGrpcReflection();
             services.AddScoped<IMongoQueryRepository<Room>, RoomQueryRepository>();
             services.AddScoped<IRepository<Room>, RoomRepository>();
+            services.AddSagaConsumer(_configuration);
+            services.AddHostedService<SagaBackgroundService>();
             services.AddScoped<IMongoCollection<Room>>(f =>
             {
                 var mongoUrl = new MongoUrl(_configuration["ConnectionString:MongoDb"]);
@@ -38,8 +42,9 @@ namespace Order.HotelService
         }
     
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IHostApplicationLifetime hostApplicationLifetime)
         {
+            
             app.UseRouting();
             if (env.IsDevelopment())
             {
@@ -51,6 +56,9 @@ namespace Order.HotelService
                 cfg.MapGrpcReflectionService();
                 cfg.MapGrpcService<RoomSvc>();
             });
+            
         }
+
+        
     }
 }

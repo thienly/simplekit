@@ -27,7 +27,7 @@ namespace SimpleKit.StateMachine.Persistences
             }
             else
             {
-                context.Writer.WriteString(((Type) value).FullName);
+                context.Writer.WriteString(((Type) value).AssemblyQualifiedName);
             }
         }
 

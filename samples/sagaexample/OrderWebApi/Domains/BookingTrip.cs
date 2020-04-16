@@ -1,6 +1,6 @@
 using System;
 
-namespace OrderWorker.Domains
+namespace OrderWebApi.Domains
 {
     public class BookingTrip
     {

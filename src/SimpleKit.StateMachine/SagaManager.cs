@@ -1,39 +1,38 @@
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using SimpleKit.StateMachine.Definitions;
 using SimpleKit.StateMachine.Persistences;
 
 namespace SimpleKit.StateMachine
 {
-    public interface ISagaManager
+    public interface ISagaManager<T> where T: class,ISagaState
     {
-        SagaStateProxy Process<TSagaState>(TSagaState state) where TSagaState : class, ISagaState;
+        SagaStateProxy Process(T state,SagaStateProxy sagaStateProxy);
     }
 
-    public delegate object SagaStepDefinitionFactory(Type type);
+    public delegate object SagaStepDefinitionFactory(Type typem, object state);
 
-    public class SagaManager : ISagaManager
+    public interface ISagaPublisher
     {
-        private readonly SagaStepDefinitionFactory _factory;
+        void Publish(SagaCommandContext context, byte[] data);
+    }
+    public class SagaManager<T> : ISagaManager<T> where T: class, ISagaState
+    {
         private readonly ISagaPersistence _sagaPersistence;
-
-        public SagaManager(SagaStepDefinitionFactory factory, ISagaPersistence sagaPersistence )
+        private readonly ISagaPublisher _sagaPublisher;
+        public SagaManager(ISagaPersistence sagaPersistence, ISagaPublisher sagaPublisher)
         {
-            _factory = factory;
             _sagaPersistence = sagaPersistence;
+            _sagaPublisher = sagaPublisher;
         }
-
-        private Type GetDeclaringType<TSagaState>() where TSagaState : class, ISagaState
-        {
-            var definition = typeof(SagaDefinition<>).MakeGenericType(typeof(TSagaState));
-            var builder = _factory(definition);
-            return builder.GetType();
-        }
-
-        public SagaStateProxy Process<TSagaState>(TSagaState sagaState) where TSagaState : class, ISagaState
+        public SagaStateProxy Process(T sagaState, SagaStateProxy sagaStateProxy)
         {
             SagaStateProxy result;
-            var sagaDefinition = (SagaDefinition<TSagaState>) _factory(typeof(SagaDefinition<TSagaState>));
-            var sagaStateProxy = _sagaPersistence.Load(sagaState.SagaId);
+            var types = Assembly.GetCallingAssembly().GetTypes()
+                .FirstOrDefault(x => x.BaseType == typeof(SagaDefinition<>).MakeGenericType(sagaState.GetType()));
+            var sagaDefinition = (SagaDefinition<T>) Activator.CreateInstance(types, new object[] {(T) sagaState});
             
             if (sagaStateProxy.IsCompleted)
                 throw new SagaException(sagaState.SagaId, "The saga is already completed");
@@ -45,7 +44,7 @@ namespace SimpleKit.StateMachine
                 sagaStateProxy is EmptySagaState ? SagaDirection.Forward : sagaStateProxy.Direction;
             if (!(sagaStateProxy is EmptySagaState))
             {
-                sagaState = (TSagaState) sagaStateProxy.SagaState;
+                sagaState = (T)sagaStateProxy.SagaState;
             }
             switch (sagaDirection)
             {
@@ -75,7 +74,7 @@ namespace SimpleKit.StateMachine
                     newProxy = new SagaStateProxy(sagaState, (bool) isCompleted, DateTime.Now,
                         version, stepDefinition.Name,
                         stepDefinition.PreviousStep == null ? stepDefinition.Name : stepDefinition.PreviousStep.Name,
-                        GetDeclaringType<TSagaState>());
+                        sagaDefinition.GetType());
                     newProxy.MoveBackward();
                 }
                 else
@@ -84,7 +83,7 @@ namespace SimpleKit.StateMachine
                     newProxy = new SagaStateProxy(sagaState, false, DateTime.Now, version,
                         stepDefinition.Name,
                         $"WaitingFor_{stepDefinition.Name}",
-                        GetDeclaringType<TSagaState>());
+                        sagaDefinition.GetType());
                     newProxy.MoveBackward();
                 }
 
@@ -108,16 +107,18 @@ namespace SimpleKit.StateMachine
                         newProxy = new SagaStateProxy(sagaState, (bool) isCompleted, DateTime.Now,
                             version, stepDefinition.Name,
                             stepDefinition.NextStep == null ? stepDefinition.Name : stepDefinition.NextStep.Name,
-                            GetDeclaringType<TSagaState>());
+                            sagaDefinition.GetType());
                         newProxy.MoveForward();
                     }
                     else
                     {
+                        // send the message, getting confirmation from message broker and then saving to the database.
+                        _sagaPublisher.Publish(definitionParticipantHandler.SagaCommandContext, definitionParticipantHandler.Data);
                         var version = sagaStateProxy.Version + 1;
                         newProxy = new SagaStateProxy(sagaState, isCompleted, DateTime.Now, version,
                             stepDefinition.Name,
                             $"WaitingFor_{stepDefinition.Name}",
-                            GetDeclaringType<TSagaState>());
+                            sagaDefinition.GetType());
                         newProxy.MoveForward();
                     }
                 }
@@ -127,7 +128,7 @@ namespace SimpleKit.StateMachine
                     newProxy = new SagaStateProxy(sagaState, false, DateTime.Now,
                         version, stepDefinition.Name,
                         stepDefinition.PreviousStep == null ? stepDefinition.Name : stepDefinition.PreviousStep.Name,
-                        GetDeclaringType<TSagaState>());
+                        sagaDefinition.GetType());
                     newProxy.Error = new SagaException(newProxy.SagaId, e.Message);
                     newProxy.MoveBackward();
                 }

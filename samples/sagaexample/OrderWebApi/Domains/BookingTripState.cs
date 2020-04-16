@@ -1,26 +1,20 @@
 using System;
 using SimpleKit.StateMachine.Definitions;
 
-namespace OrderWorker.Domains
+namespace OrderWebApi.Domains
 {
     public class BookingTripState : ISagaState
     {
         public Guid SagaId { get; set; }
         public Guid CarBookingId { get; set; }
         public Guid HotelBookingId { get; set; }
-        public BookingTrip Trip { get; set; }
-
-        public BookingTripState(BookingTrip trip) : this(trip, Guid.NewGuid())
+        public BookingTripState(Guid carBookingId, Guid hotelBookingId)
         {
+            CarBookingId = carBookingId;
+            HotelBookingId = hotelBookingId;
+            SagaId = Guid.NewGuid();
         }
-
-        public BookingTripState(BookingTrip trip, Guid id)
-        {
-            Trip = trip;
-            SagaId = id;
-        }
-
-        public BookingTripState()
+        internal BookingTripState()
         {
         }
 
@@ -52,7 +46,7 @@ namespace OrderWorker.Domains
             return new BookHotelCommand()
             {
                 SagaId = this.SagaId,
-                HotelId = this.Trip.HotelId,
+                HotelId = this.HotelBookingId,
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1)
             };
@@ -86,7 +80,7 @@ namespace OrderWorker.Domains
             return new BookCarCommand()
             {
                 SagaId = this.SagaId,
-                CarId = this.Trip.CarId,
+                CarId = this.CarBookingId,
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1)
             };

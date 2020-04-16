@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SimpleKit.StateMachine.Definitions
+﻿namespace SimpleKit.StateMachine.Definitions
 {
     public abstract class SagaDefinition
     {
@@ -119,10 +117,5 @@ namespace SimpleKit.StateMachine.Definitions
 
             return firstStep;
         }
-    }
-
-    public interface ISagaCommandEndpointBuilder
-    {
-        IReadOnlyCollection<string> GetReplyChannel();
     }
 }

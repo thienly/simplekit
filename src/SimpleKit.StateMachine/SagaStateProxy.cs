@@ -1,4 +1,5 @@
 using System;
+using SharpCompress.Common;
 using SimpleKit.StateMachine.Definitions;
 
 namespace SimpleKit.StateMachine
@@ -88,6 +89,7 @@ namespace SimpleKit.StateMachine
             };
         }
 
+        
         public SagaException Error { get; set; }
         public SagaDirection Direction { get; private set; } = SagaDirection.Forward;
 

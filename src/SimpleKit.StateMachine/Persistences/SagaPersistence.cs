@@ -7,11 +7,16 @@ namespace SimpleKit.StateMachine.Persistences
 {
     public class SagaPersistence : ISagaPersistence
     {
+        private string _connectionString;
         private IMongoCollection<SagaStateProxy> _mongoCollection;
 
-        public SagaPersistence(IMongoCollection<SagaStateProxy> mongoCollection)
+        public SagaPersistence(string connectionString)
         {
-            _mongoCollection = mongoCollection;
+            _connectionString = connectionString;
+            var url = new MongoUrl(_connectionString);
+            var mongoClient = new MongoClient(url);
+            _mongoCollection = mongoClient.GetDatabase(url.DatabaseName).GetCollection<SagaStateProxy>("sagamanager");
+            
         }
 
         public SagaStateProxy Load(Guid sagaId)
